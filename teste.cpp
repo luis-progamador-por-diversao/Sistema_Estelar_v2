@@ -31,7 +31,7 @@ double monta_orbitas_para_pares_binarios(std::mt19937 *motor, Conjunto &par_bina
 //Classifica as estrelas de acordo com suas massas.
 void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool um_par_binario = true);
 void classifica_trinarios(std::vector<Estrela> &sistema);
-void classifica_estrelas(std::vector<Conjunto> &grupos, std::vector<Estrela> &sistema);
+//void classifica_estrelas(std::vector<Conjunto> &grupos, std::vector<Estrela> &sistema);
 
 int main(){
     int seed = 0, escolhido = 0;
@@ -162,7 +162,7 @@ int main(){
             }
         }
 
-        classifica_estrelas(conju, sistema_estelar);
+        //classifica_estrelas(conju, sistema_estelar);
 
         for(int R = 0; R < quanti; R++){imprime_estrela(sistema_estelar[R]);}
         conju.clear();
@@ -511,7 +511,7 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
     nome_0.push_back('B');
     sistema[1].set_nome(nome_1);
     sistema[0].set_nome(nome_0);
-}
+}/*
 void classifica_estrelas(std::vector<Conjunto> &grupos, std::vector<Estrela> &sistema){
     const int quanti_estrela = sistema.size();
     
@@ -591,3 +591,4 @@ void classifica_estrelas(std::vector<Conjunto> &grupos, std::vector<Estrela> &si
         }
     }
 }
+*/
