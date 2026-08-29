@@ -2,7 +2,7 @@
 #include <random>
 #include <vector>
 #include <stdlib.h>
-#include "objetos_celestes.hpp"
+#include "sistema_arvore.hpp"
 //||\n\033[0m?
 
 struct Conjunto{
