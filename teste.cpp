@@ -4,18 +4,9 @@
 #include <stdlib.h>
 #include "sistema_arvore.hpp"
 //||\n\033[0m?
-
-struct Conjunto{
-    Orbita orbt;
-    double massa = 0.0;
-    double dist_M1_m2 = 0.0;
-    int posicao_estrela1 = -1;
-    int posicao_estrela2 = -1;
-    bool nao_modificado = true;
-};
    
 //Aleatoriza estrelas e nome.
-std::string nome(std::mt19937 *ale);
+std::string nome(std::mt19937 *mt);
 void estrelas_aleatorias(std::mt19937 *motor_aleatorio, std::vector<Estrela> &sistema);
 
 //Revela o sistema no terminal.
@@ -26,14 +17,16 @@ void imprime_estrela(Estrela &Estrela);
 float excentri(std::mt19937 *motor);
 double distancia_aleatoria(std::mt19937 *motor, float menor_dist_pos, float maior_dist_pos);
 double monta_orbitas_de_binarios(std::mt19937 *motor, Estrela &estrela1, Estrela &estrela2);
-double monta_orbitas_para_pares_binarios(std::mt19937 *motor, Conjunto &par_binario, Estrela &estrela);
+double monta_orbitas_para_pares_binarios(std::mt19937 *motor, No &par_binario, Estrela &estrela);
 
 //Classifica as estrelas de acordo com suas massas.
 void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool um_par_binario = true);
 void classifica_trinarios(std::vector<Estrela> &sistema);
-//void classifica_estrelas(std::vector<Conjunto> &grupos, std::vector<Estrela> &sistema);
+//void classifica_estrelas(std::vector<No> &grupos, std::vector<Estrela> &sistema);
 
 int main(){
+    std::vector<Estrela> sistema_estelar;
+    std::vector<No> galhos;
     int seed = 0, escolhido = 0;
     char escolha;
     
@@ -64,10 +57,10 @@ int main(){
     std::cout << std::endl << "Seed = " << seed;
     std::cout << "\nGerando Estrelas...\n";
 
-    std::mt19937 ale(seed);
+    std::mt19937 mt(seed);
     /*
     std::uniform_int_distribution<int> de_um_a_cem(0, 100);
-    int cem = de_um_a_cem(ale);
+    int cem = de_um_a_cem(mt);
     int quanti = 0;
     if(cem < 75){
         quanti = 1;
@@ -88,10 +81,10 @@ int main(){
     const int quanti = 4;
     
 
-    std::vector<Estrela> sistema_estelar;
+    
     sistema_estelar.reserve(quanti);  
    
-    estrelas_aleatorias(&ale, sistema_estelar);
+    estrelas_aleatorias(&mt, sistema_estelar);
    
     switch (quanti){
     case 1:
@@ -101,7 +94,7 @@ int main(){
     case 2:
        nomeia_pares_binarios(sistema_estelar[0], sistema_estelar[1], true);
        
-       monta_orbitas_de_binarios(&ale, sistema_estelar[0], sistema_estelar[1]);                                                                        
+       monta_orbitas_de_binarios(&mt, sistema_estelar[0], sistema_estelar[1]);                                                                        
        
        imprime_estrela(sistema_estelar[0]);
        imprime_estrela(sistema_estelar[1]);
@@ -116,66 +109,65 @@ int main(){
         break;
     default:
         const int conju_quanti = quanti - 1;
-        std::vector<Conjunto> conju;
-        conju.reserve(conju_quanti);
-        Conjunto par_binario;
-
-        par_binario.massa = sistema_estelar[0].get_massa() + sistema_estelar[1].get_massa();
-        par_binario.dist_M1_m2 = monta_orbitas_de_binarios(&ale, sistema_estelar[0], sistema_estelar[1]);
-        par_binario.posicao_estrela1 = 0; 
-        par_binario.posicao_estrela2 = 1;
         
-        conju.push_back(par_binario);
+        galhos.reserve(conju_quanti);
+        double dist = monta_orbitas_de_binarios(&mt, sistema_estelar[0], sistema_estelar[1]);
+        galhos.emplace_back(sistema_estelar[0], sistema_estelar[1], dist);
+        galhos[0].modificado = true;
 
         std::uniform_int_distribution<int> _0_ou_1(0,1);
-        int par_binario_ou_orb_conj = 1;
+        int pares = 1;
 
-        for(int i = 2, conju_posicao = 0; i < quanti; i++, conju_posicao++){
-            //std::cout << "\n\nvalor de i = " << i;
-            par_binario_ou_orb_conj = _0_ou_1(ale);
-            //std::cout << "\n\nvalor de par_binario_ou_orb_conj = " << par_binario_ou_orb_conj;
+        for(int i = 2, p = 0; i < quanti; i++, p++){
+            pares = _0_ou_1(mt);
 
-            if(par_binario_ou_orb_conj == 0){//tenta formar um par binario
+            if(pares == 0){
+                if(i+1 <= quanti -1){
+                    dist = monta_orbitas_de_binarios(&mt, sistema_estelar[i], sistema_estelar[i+1]);
+                    galhos.emplace_back(sistema_estelar[i], sistema_estelar[i++], dist);
 
-                if(i + 1 <= quanti - 1){//se e possivel formar um par
-                    //std::cout << "\nEntrou na condicao if(i + 1 <= quanti - 1)...";
-                    par_binario.dist_M1_m2 = monta_orbitas_de_binarios(&ale, sistema_estelar[i], sistema_estelar[i + 1]);
-                    par_binario.massa = sistema_estelar[i].get_massa() + sistema_estelar[i + 1].get_massa();
-                    par_binario.posicao_estrela1 = i; 
-                    i++;
-                    par_binario.posicao_estrela2 = i;
-                    //std::cout << "\ni = " << i;
-                    conju.push_back(par_binario);
-
-                }else{//se não for possivel
-                    par_binario_ou_orb_conj = 1;
+                }else{
+                    pares = 1;
                 }
             }
-            if(par_binario_ou_orb_conj == 1){//a estrela orbita de massa de um par  .\main.exe
-                //std::cout << "\nEntrou na condicao if(par_binario_ou_orb_conj == 1)";
-                par_binario.massa = sistema_estelar[i].get_massa() + conju[conju_posicao].massa;
-                par_binario.dist_M1_m2 = monta_orbitas_para_pares_binarios(&ale, conju[conju_posicao], sistema_estelar[i]);
-                par_binario.posicao_estrela1 = -1;
-                par_binario.posicao_estrela2 = i;
-
-                conju.push_back(par_binario);
+            if(pares == 1){
+                dist = monta_orbitas_para_pares_binarios(&mt, galhos[p], sistema_estelar[i]);
+                galhos.emplace_back(galhos[p], sistema_estelar[i], dist);
             }
         }
 
-        //classifica_estrelas(conju, sistema_estelar);
+        if(galhos.capacity() != galhos.size()){
+            unsigned int no_id = 0;
+
+            while(galhos.size() < galhos.capacity()){
+                int i = 0;
+
+                while(i < galhos.size()){
+
+                    if(!galhos[i].modificado && (galhos[i].subsistema_maior == nullptr && galhos[i].subsistema_menor == nullptr)){
+                        no_id = i-1;
+                        galhos[i].modificado = true;
+                        break;
+                    }
+                    i++;
+                }
+                galhos.emplace_back(galhos.front(), galhos[no_id]);
+            }
+        }
+        //classifica_estrelas(galhos, sistema_estelar);
 
         for(int R = 0; R < quanti; R++){imprime_estrela(sistema_estelar[R]);}
-        conju.clear();
+        galhos.clear();
 
         break;
     }
 
  
     /*
-    std::cout << "\n\nConferindo as posicoes do conju de tamanho: " << conju.size();
-    for(int v = 0; v < conju.size(); v++){
-        std::cout << "\n\nconju[" << v << "].posicao1 = " << conju[v].posicao_estrela1;
-        std::cout << "\nconju[" << v << "].posicao2 = " << conju[v].posicao_estrela2;
+    std::cout << "\n\nConferindo as posicoes do galhos de tamanho: " << galhos.size();
+    for(int v = 0; v < galhos.size(); v++){
+        std::cout << "\n\nconju[" << v << "].posicao1 = " << galhos[v].posicao_estrela1;
+        std::cout << "\nconju[" << v << "].posicao2 = " << galhos[v].posicao_estrela2;
     }
     */
     sistema_estelar.clear();
@@ -185,7 +177,7 @@ int main(){
 }
 
 
-std::string nome(std::mt19937 *ale){
+std::string nome(std::mt19937 *mt){
 
     char letras_maiusculas[26]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
     char num[10]{'0','1','2','3','4','5','6','7','8','9'};
@@ -196,18 +188,18 @@ std::string nome(std::mt19937 *ale){
     std::string Nome = "";
     int r = 0, R = 0, numP = 0, letraP = 0, quanti = 0, quanti2 = 0;
 
-    quanti = de_1_a_5(*ale);
+    quanti = de_1_a_5(*mt);
     for(r = 0; r < quanti; r++){
-        letraP = letras_sort(*ale);    
+        letraP = letras_sort(*mt);    
         Nome.push_back(letras_maiusculas[letraP]);
     }
 
     Nome.push_back(' ');
-    quanti2 = de_1_a_3(*ale);
+    quanti2 = de_1_a_3(*mt);
     for(r = 0; r < quanti2; r++){
-        quanti = de_1_a_5(*ale);
+        quanti = de_1_a_5(*mt);
         for(R = 0; R < quanti; R++){
-            numP = num_sort(*ale);
+            numP = num_sort(*mt);
             Nome.push_back(num[numP]);         
         } 
         Nome.push_back('-');
@@ -326,7 +318,7 @@ void imprime_orbita(const Orbita orbit){
 }
 
 //Em desenvolvimento...
-void imprime_sistema(const std::vector<Conjunto> &sub, std::vector<Estrela> &estrelas){
+void imprime_sistema(const std::vector<No> &sub, std::vector<Estrela> &estrelas){
 
 }
 
@@ -339,20 +331,20 @@ double distancia_aleatoria(std::mt19937 *motor, float menor_dist_pos, float maio
     std::uniform_real_distribution<float> dist(menor_dist_pos, maior_dist_pos);
     return dist(*motor);
 }
-double monta_orbitas_para_pares_binarios(std::mt19937 *motor, Conjunto &par_binario, Estrela &estrela){
+double monta_orbitas_para_pares_binarios(std::mt19937 *motor, No &par_binario, Estrela &estrela){
     
-    double raio_de_Hill = par_binario.dist_M1_m2 * 2.4;
+    double raio_de_Hill = par_binario.membro_dist * 2.4;
     float excent = excentri(motor);
     
-    double distancia = calculo_distancia_pela_esfera_de_Hill(raio_de_Hill, excent, par_binario.massa, estrela.get_massa());
+    double distancia = calculo_distancia_pela_esfera_de_Hill(raio_de_Hill, excent, par_binario.massa_subsistema, estrela.get_massa());
 
-    if(estrela.get_massa() < par_binario.massa * 0.3){// evita que uma estrela menos massiva passe entre o par binario
+    if(estrela.get_massa() < par_binario.massa_subsistema * 0.3){// evita que uma estrela menos massiva passe entre o par binario
         distancia = distancia_aleatoria(motor, distancia * 2, distancia * 15);
 
     }
 
-    if(par_binario.massa > estrela.get_massa()){
-        double maior_valor = par_binario.massa;
+    if(par_binario.massa_subsistema > estrela.get_massa()){
+        double maior_valor = par_binario.massa_subsistema;
         double menor_valor = estrela.get_massa();
 
         double apoastro_1 = distancia * (maior_valor /(maior_valor + menor_valor));
@@ -361,7 +353,7 @@ double monta_orbitas_para_pares_binarios(std::mt19937 *motor, Conjunto &par_bina
         estrela.set_orbita(calcula_orbita(apoastro_1, excent, true));
         par_binario.orbt = calcula_orbita(apoastro_2, excent, true);
     }else{
-        double maior_valor = par_binario.massa;
+        double maior_valor = par_binario.massa_subsistema;
         double menor_valor = estrela.get_massa();
 
         double apoastro_1 = distancia * (maior_valor /(maior_valor + menor_valor));
@@ -512,7 +504,7 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
     sistema[1].set_nome(nome_1);
     sistema[0].set_nome(nome_0);
 }/*
-void classifica_estrelas(std::vector<Conjunto> &grupos, std::vector<Estrela> &sistema){
+void classifica_estrelas(std::vector<No> &grupos, std::vector<Estrela> &sistema){
     const int quanti_estrela = sistema.size();
     
     //esta função só deve ser chamada quando o sistema possui mais de 3 estrelas.
