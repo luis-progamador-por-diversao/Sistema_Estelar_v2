@@ -20,9 +20,9 @@ double monta_orbitas_de_binarios(std::mt19937 *motor, Estrela &estrela1, Estrela
 double monta_orbitas_para_pares_binarios(std::mt19937 *motor, No &par_binario, Estrela &estrela);
 
 //Classifica as estrelas de acordo com suas massas.
-void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool um_par_binario = true);
+void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool binario = true);
 void classifica_trinarios(std::vector<Estrela> &sistema);
-//void classifica_estrelas(std::vector<No> &grupos, std::vector<Estrela> &sistema);
+void classifica_estrelas(No &no_raiz, const int quanti);
 
 int main(){
     std::vector<Estrela> sistema_estelar;
@@ -79,9 +79,6 @@ int main(){
     }
     */
     const int quanti = 4;
-    
-
-    
     sistema_estelar.reserve(quanti);  
    
     estrelas_aleatorias(&mt, sistema_estelar);
@@ -151,10 +148,11 @@ int main(){
                     }
                     i++;
                 }
-                galhos.emplace_back(galhos.front(), galhos[no_id]);
+                galhos.emplace_back(galhos.back(), galhos[no_id], 0.0);
             }
         }
-        //classifica_estrelas(galhos, sistema_estelar);
+        galhos[0].modificado = false;
+        //classifica_estrelas(galhos.back(), sistema_estelar.size());
 
         for(int R = 0; R < quanti; R++){imprime_estrela(sistema_estelar[R]);}
         galhos.clear();
@@ -162,7 +160,6 @@ int main(){
         break;
     }
 
- 
     /*
     std::cout << "\n\nConferindo as posicoes do galhos de tamanho: " << galhos.size();
     for(int v = 0; v < galhos.size(); v++){
@@ -397,43 +394,30 @@ double monta_orbitas_de_binarios(std::mt19937 *motor, Estrela &estrela1, Estrela
 }
 
 
-void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool um_par_binario){
+void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool binario){
     std::string estrela_nome_1 = estrela_1.get_nome();
     std::string estrela_nome_2 = estrela_2.get_nome();
-   
-    if(um_par_binario){ 
-        estrela_nome_2.push_back(' ');
-        estrela_nome_1.push_back(' ');
+    estrela_nome_2.push_back(' ');
+    estrela_nome_1.push_back(' ');
 
-        if(estrela_1.get_massa() > estrela_2.get_massa()){
-            estrela_nome_1.push_back('A');
-            estrela_nome_2.push_back('B');
+    if(estrela_1.get_massa() > estrela_2.get_massa()){
+        estrela_nome_1.push_back('A');
+        estrela_nome_2.push_back('B');
 
-            estrela_1.set_nome(estrela_nome_1);
-            estrela_2.set_nome(estrela_nome_2);
-        }else{
-            estrela_nome_1.push_back('B');
-            estrela_nome_2.push_back('A');
+        estrela_1.set_nome(estrela_nome_1);
+        estrela_2.set_nome(estrela_nome_2);
+        return;
+    }
 
-            estrela_1.set_nome(estrela_nome_1);
-            estrela_2.set_nome(estrela_nome_2);
-        }
-    }else{
-        if(estrela_1.get_massa() > estrela_2.get_massa()){
-            estrela_nome_1.push_back('a');
-            estrela_nome_2.push_back('b');
+    estrela_nome_1.push_back('B');
+    estrela_nome_2.push_back('A');
 
-            estrela_1.set_nome(estrela_nome_1);
-            estrela_2.set_nome(estrela_nome_2);
-        }else{
-            estrela_nome_1.push_back('b');
-            estrela_nome_2.push_back('a');
-
-            estrela_1.set_nome(estrela_nome_1);
-            estrela_2.set_nome(estrela_nome_2);
-        }
-    }  
+    estrela_1.set_nome(estrela_nome_1);
+    estrela_2.set_nome(estrela_nome_2);
+        
+    return;
 }
+
 void classifica_trinarios(std::vector<Estrela> &sistema){
     
     if(sistema.size() != 3)return;
@@ -503,84 +487,65 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
     nome_0.push_back('B');
     sistema[1].set_nome(nome_1);
     sistema[0].set_nome(nome_0);
-}/*
-void classifica_estrelas(std::vector<No> &grupos, std::vector<Estrela> &sistema){
-    const int quanti_estrela = sistema.size();
+}
+
+//Em desenvolvimento...
+void classifica_estrelas(No &no_raiz, const int quanti){
     
-    //esta função só deve ser chamada quando o sistema possui mais de 3 estrelas.
-    if(quanti_estrela < 4)return;
-    
-    const int quanti_pares = grupos.size();
-    
-    char classificao[7]{'A', 'B', 'C', 'D', 'E', 'F', 'G'};
-    double maior_massa = 0;
-    int posicao_do_grupo = 0;
-    int posicao_das_letras = 0;
+    //Esta função só pode trabalhar acima de 3 estrelas.
+    if(quanti < 3)return;
+    char letras[7]{'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+    unsigned int letra_id = 0;
 
-    for(int i = 0; i < quanti_pares; i++){
-        maior_massa = 0;
+    auto nomeia_bi = [&](Estrela &star_maior, Estrela &star_menor){
+        std::string n_maior = star_maior.get_nome();
+        std::string n_menor = star_menor.get_nome();
+        n_maior.push_back(' ');
+        n_maior.push_back(letras[letra_id]);
+        n_maior.push_back('a');
 
-        for(int r = 0; r < quanti_pares; r++){
+        n_menor.push_back(' ');
+        n_menor.push_back(letras[letra_id]);
+        n_menor.push_back('b');
 
-            if(grupos[r].nao_modificado){
-                double compara = 0.0;
+        letra_id++;
+    };
+    auto nomeia_soli = [&](Estrela &star){
+        std::string n = star.get_nome();
+        n.push_back(' ');
+        n.push_back(letras[letra_id]);
 
-                if(grupos[r].posicao_estrela1 <= -1 && grupos[r].posicao_estrela2 > -1){
-                    compara = sistema[grupos[r].posicao_estrela2].get_massa();
+        letra_id++;
+    };
 
-                }else if(grupos[r].posicao_estrela2 <= -1 && grupos[r].posicao_estrela1 > -1){
-                    compara = sistema[grupos[r].posicao_estrela1].get_massa();
+    //procurando o maior subsistema com estrelas.
+    int nomeadas = 0;
+    while(!no_raiz.modificado && no_raiz.subsistema_maior != nullptr){
+        
+        if(!no_raiz.modificado && no_raiz.subsistema_maior != nullptr){
+            no_raiz.modificado = true;
 
-                }else{
-                    compara = grupos[r].massa;
-                }
-                
-                if(compara > maior_massa){
-                    maior_massa = compara;
-                    posicao_do_grupo = r;
-                }      
-            }      
-        }
+            if(no_raiz.estrela_maior != nullptr && no_raiz.estrela_menor != nullptr){
+                nomeia_bi(*no_raiz.estrela_maior, *no_raiz.estrela_menor);
 
-        if(grupos[posicao_do_grupo].posicao_estrela1 > -1 && grupos[posicao_do_grupo].posicao_estrela2 > -1){
-            grupos[posicao_do_grupo].nao_modificado = false;
-            int estrela1 = grupos[posicao_do_grupo].posicao_estrela1;
-            int estrela2 = grupos[posicao_do_grupo].posicao_estrela2;
-            std::string nome1 = sistema[estrela1].get_nome(), nome2 = sistema[estrela2].get_nome();
-            nome1.push_back(' ');nome2.push_back(' ');
-            nome1.push_back(classificao[posicao_das_letras]);
-            nome2.push_back(classificao[posicao_das_letras]); 
-            posicao_das_letras++;
-
-            sistema[estrela1].set_nome(nome1); 
-            sistema[estrela2].set_nome(nome2);
-
-            nomeia_pares_binarios(sistema[estrela1], sistema[estrela2], false);
-        }else{
-
-            if(grupos[posicao_do_grupo].posicao_estrela1 > -1){
-                grupos[posicao_do_grupo].nao_modificado = false;
-                int estrela = grupos[posicao_do_grupo].posicao_estrela1;
-                std::string nome = sistema[estrela].get_nome();
-                nome.push_back(' ');
-                nome.push_back(classificao[posicao_das_letras]);
-    
-                posicao_das_letras++;
-    
-                sistema[estrela].set_nome(nome);
+                nomeadas += 2;
+                break;
             }
+            if(no_raiz.estrela_menor != nullptr){
+                nomeia_soli(*no_raiz.estrela_menor);
 
-            if(grupos[posicao_do_grupo].posicao_estrela2 > -1){
-                grupos[posicao_do_grupo].nao_modificado = false;
-                int estrela = grupos[posicao_do_grupo].posicao_estrela2;
-                std::string nome = sistema[estrela].get_nome();
-                nome.push_back(' ');
-                nome.push_back(classificao[posicao_das_letras]);
-                posicao_das_letras++;
-    
-                sistema[estrela].set_nome(nome);
-            }         
+                nomeadas++;
+                break;
+            }
+            if(no_raiz.estrela_maior != nullptr){
+                nomeia_soli(*no_raiz.estrela_maior);
+
+                nomeadas++;
+                break;
+            }
+            break;
         }
+
+        
     }
 }
-*/
