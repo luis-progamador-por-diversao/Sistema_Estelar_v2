@@ -22,7 +22,7 @@ double monta_orbitas_para_pares_binarios(std::mt19937 *motor, No &par_binario, E
 //Classifica as estrelas de acordo com suas massas.
 void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool binario = true);
 void classifica_trinarios(std::vector<Estrela> &sistema);
-void classifica_estrelas(No &no_raiz, const int quanti);
+void classifica_estrelas(std::vector<No> &grup, const int quanti);
 
 int main(){
     std::vector<Estrela> sistema_estelar;
@@ -132,6 +132,7 @@ int main(){
                 galhos.emplace_back(galhos[p], sistema_estelar[i], dist);
             }
         }
+        classifica_estrelas(galhos, sistema_estelar.size());
 
         if(galhos.capacity() != galhos.size()){
             unsigned int no_id = 0;
@@ -152,7 +153,6 @@ int main(){
             }
         }
         galhos[0].modificado = false;
-        //classifica_estrelas(galhos.back(), sistema_estelar.size());
 
         for(int R = 0; R < quanti; R++){imprime_estrela(sistema_estelar[R]);}
         galhos.clear();
@@ -160,13 +160,6 @@ int main(){
         break;
     }
 
-    /*
-    std::cout << "\n\nConferindo as posicoes do galhos de tamanho: " << galhos.size();
-    for(int v = 0; v < galhos.size(); v++){
-        std::cout << "\n\nconju[" << v << "].posicao1 = " << galhos[v].posicao_estrela1;
-        std::cout << "\nconju[" << v << "].posicao2 = " << galhos[v].posicao_estrela2;
-    }
-    */
     sistema_estelar.clear();
 
     std::cout << "\n\n\033[32mProgama finalizado\033[0m";
@@ -541,11 +534,9 @@ void classifica_estrelas(std::vector<No> &grup, const int quanti){
                 if(grup[i].estrela_maior != nullptr && grup[i].estrela_menor != nullptr){
                     massa = grup[i].massa_subsistema;
                     situacao = 1;
-
                 }else if(grup[i].estrela_maior != nullptr){
                     massa = grup[i].estrela_maior->get_massa();
                     situacao = 2;
-
                 }else if(grup[i].estrela_menor != nullptr){
                     massa = grup[i].estrela_menor->get_massa();
                     situacao = 3;
@@ -558,17 +549,19 @@ void classifica_estrelas(std::vector<No> &grup, const int quanti){
             }
         }
 
-        switch (situacao)
-        {
+        switch(situacao){
         case 1:
             nomeia_bi(*grup[no_id].estrela_maior, *grup[no_id].estrela_menor);
             break;
+
         case 2:
             nomeia_soli(*grup[no_id].estrela_maior);
             break;
+
         case 3:
             nomeia_soli(*grup[no_id].estrela_menor);
             break;
+
         default:
             break;
         }
