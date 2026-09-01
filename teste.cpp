@@ -489,63 +489,89 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
     sistema[0].set_nome(nome_0);
 }
 
+//||\n\033[0m?
 //Em desenvolvimento...
-void classifica_estrelas(No &no_raiz, const int quanti){
+void classifica_estrelas(std::vector<No> &grup, const int quanti){
     
     //Esta função só pode trabalhar acima de 3 estrelas.
     if(quanti < 3)return;
+
     char letras[7]{'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+    double mass_m = 0.0;
     unsigned int letra_id = 0;
-
+    unsigned int no_id = 0;
+    int nomeadas = 0;
+    
     auto nomeia_bi = [&](Estrela &star_maior, Estrela &star_menor){
-        std::string n_maior = star_maior.get_nome();
-        std::string n_menor = star_menor.get_nome();
-        n_maior.push_back(' ');
-        n_maior.push_back(letras[letra_id]);
-        n_maior.push_back('a');
-
-        n_menor.push_back(' ');
-        n_menor.push_back(letras[letra_id]);
-        n_menor.push_back('b');
-
+        std::string n = star_maior.get_nome();
+        n.push_back(' ');
+        n.push_back(letras[letra_id]);
+        n.push_back('a');
+        star_maior.set_nome(n);
+        
+        n = star_menor.get_nome();
+        n.push_back(' ');
+        n.push_back(letras[letra_id]);
+        n.push_back('b');
+        star_menor.set_nome(n);
+        
         letra_id++;
+        nomeadas += 2;
     };
+
     auto nomeia_soli = [&](Estrela &star){
         std::string n = star.get_nome();
         n.push_back(' ');
         n.push_back(letras[letra_id]);
+        star.set_nome(n);
 
         letra_id++;
+        nomeadas++;
     };
+    
+    while(nomeadas < quanti){
+        int situacao = 0;
 
-    //procurando o maior subsistema com estrelas.
-    int nomeadas = 0;
-    while(!no_raiz.modificado && no_raiz.subsistema_maior != nullptr){
-        
-        if(!no_raiz.modificado && no_raiz.subsistema_maior != nullptr){
-            no_raiz.modificado = true;
+        for(int i = 0; i < grup.size(); i++){
+            situacao = 0;
 
-            if(no_raiz.estrela_maior != nullptr && no_raiz.estrela_menor != nullptr){
-                nomeia_bi(*no_raiz.estrela_maior, *no_raiz.estrela_menor);
+            if(!grup[i].modificado){
+                double massa = 0.0;
 
-                nomeadas += 2;
-                break;
+                if(grup[i].estrela_maior != nullptr && grup[i].estrela_menor != nullptr){
+                    massa = grup[i].massa_subsistema;
+                    situacao = 1;
+
+                }else if(grup[i].estrela_maior != nullptr){
+                    massa = grup[i].estrela_maior->get_massa();
+                    situacao = 2;
+
+                }else if(grup[i].estrela_menor != nullptr){
+                    massa = grup[i].estrela_menor->get_massa();
+                    situacao = 3;
+                }
+
+                if(mass_m < massa){
+                    mass_m = massa;
+                    no_id = i;
+                }
             }
-            if(no_raiz.estrela_menor != nullptr){
-                nomeia_soli(*no_raiz.estrela_menor);
-
-                nomeadas++;
-                break;
-            }
-            if(no_raiz.estrela_maior != nullptr){
-                nomeia_soli(*no_raiz.estrela_maior);
-
-                nomeadas++;
-                break;
-            }
-            break;
         }
 
-        
+        switch (situacao)
+        {
+        case 1:
+            nomeia_bi(*grup[no_id].estrela_maior, *grup[no_id].estrela_menor);
+            break;
+        case 2:
+            nomeia_soli(*grup[no_id].estrela_maior);
+            break;
+        case 3:
+            nomeia_soli(*grup[no_id].estrela_menor);
+            break;
+        default:
+            break;
+        }
     }
 }
+
