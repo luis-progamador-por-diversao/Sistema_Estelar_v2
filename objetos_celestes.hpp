@@ -3,18 +3,18 @@
 //||\n\033[0m?
 #include <string>
 
-double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, float excentricidade, double massa_menor, double Massa_maior);
+double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, double excentricidade, double massa_menor, double Massa_maior);
 
 struct Orbita{
     double apoastro = 0.0;
     double periastro = 0.0;
-    float excentricidade = 0.0f;
+    double excentricidade = 0.0f;
 
     Orbita();
-    Orbita(const double &apo_ou_peri, const float &excentri, const bool calcular_periastro);
+    Orbita(const double &apo_ou_peri, const double &excentri, const bool calcular_periastro);
 };
 
-Orbita calcula_orbita(double apoastro_ou_periastro, float excentricidade, bool calcular_periastro);
+Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool calcular_periastro);
 
 class Estrela{
 public:
@@ -59,14 +59,14 @@ private:
     char m_classe_tamanho = ' ';
     bool m_rochoso = false;
     
-    float m_albedo = 0.0f;
-    float m_atmosfera_densidade = 0.0f;
+    double m_albedo = 0.0f;
+    double m_atmosfera_densidade = 0.0f;
     
 };
 
-Orbita cria_orbitas_aleatorias(std::mt19937 *motor, float menor_valor, float Maior_valor, bool calcula_periastro){
+Orbita cria_orbitas_aleatorias(std::mt19937 *motor, double menor_valor, double Maior_valor, bool calcula_periastro){
     std::uniform_int_distribution<int> excent(10, 60);
-    std::uniform_real_distribution<float> periastro_ou_apoastro(menor_valor, Maior_valor);
+    std::uniform_real_distribution<double> periastro_ou_apoastro(menor_valor, Maior_valor);
     Orbita orbit;
     
     if(calcula_periastro){
@@ -84,8 +84,8 @@ Orbita cria_orbitas_aleatorias(std::mt19937 *motor, float menor_valor, float Mai
     return orbit;
 }
     
-//double Calculo_Massivo_da_esfera_de_Hill(double distancia, float excentricidade, double massa_menor, double Massa_maior);
-//double Calculo_da_esfera_de_Hill(double distancia, float excentricidade, double massa_menor, double Massa_maior);
+//double Calculo_Massivo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior);
+//double Calculo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior);
 
 //double Cauculo_forca_gravitacional(double distancia, double massa1, double massa2);
 */

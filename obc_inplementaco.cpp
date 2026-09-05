@@ -1,14 +1,14 @@
 #include <cmath>
 #include "objetos_celestes.hpp"
 //||\n\033[0m?
-double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, float excentricidade, double massa_menor, double Massa_maior){
+double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, double excentricidade, double massa_menor, double Massa_maior){
 
     double distancia = Raio_de_Hill / ((1.0 - excentricidade) * std::cbrt((massa_menor/(3.0 * Massa_maior))));
     return distancia;
 }
 
 Orbita::Orbita(){}
-Orbita::Orbita(const double &apo_ou_peri,const float &excentri,const bool calcular_periastro){
+Orbita::Orbita(const double &apo_ou_peri,const double &excentri,const bool calcular_periastro){
     
     this->excentricidade = excentri;
 
@@ -22,7 +22,7 @@ Orbita::Orbita(const double &apo_ou_peri,const float &excentri,const bool calcul
     this->periastro = apo_ou_peri;
 }
 
-Orbita calcula_orbita(double apoastro_ou_periastro, float excentricidade, bool calcula_periastro){
+Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool calcula_periastro){
     Orbita orbita;
 
     if(calcula_periastro){
@@ -90,7 +90,7 @@ void Estrela::define_raio(double r){
 
 
 /*
-double Cauculo_Massivo_da_esfera_de_Hill(double distancia, float excentricidade, double massa_menor, double Massa_maior){
+double Cauculo_Massivo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior){
     //testa se as variaveis fazem sentido
     if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (excentricidade <= 0.0f && excentricidade > 0.9f))){
         throw std::domain_error("Erro: valores informados nao fazem sentido");
@@ -100,7 +100,7 @@ double Cauculo_Massivo_da_esfera_de_Hill(double distancia, float excentricidade,
 
     return raio_de_Hill;
 }
-double Cauculo_da_esfera_de_Hill(double distancia, float excentricidade, double massa_menor, double Massa_maior){
+double Cauculo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior){
     //testa se as variaveis fazem sentido
     if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (excentricidade <= 0.0f && excentricidade > 0.9f))){
         throw std::domain_error("Erro: valores informados nao fazem sentido");

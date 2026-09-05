@@ -1,52 +1,58 @@
 #include "sistema_arvore.hpp"
 
 //No construtores.
-No::No(){}
-No::No(Estrela & star1, Estrela & star2, const double & dist){
+No::No(Estrela &star1, const int &star1_id, Estrela &star2, const int &star2_id){//,const double & dist){
 
-    this->massa_subsistema = star1.get_massa() + star2.get_massa();
-    this->membro_dist = dist;
-    this->modificado = false;
+    this->massa_sub = star1.get_massa() + star2.get_massa();
 
     if(star1.get_massa() >= star2.get_massa()){
-        this->estrela_maior = &star1;
-        this->estrela_menor = &star2;
+        this->id_maior_estrela = star1_id;
+        this->id_menor_estrela = star2_id;
 
         return;
     }
 
-    this->estrela_maior = &star2;
-    this->estrela_menor = &star1;
+    this->id_maior_estrela = star2_id;
+    this->id_menor_estrela = star1_id;
 }
-No::No(No & subconj, Estrela & star, const double & dist){
+No::No(std::unique_ptr<No> &subconj, Estrela &star, const int &star_id){//, const double & dist){
 
-    this->massa_subsistema = subconj.massa_subsistema + star.get_massa();
-    this->membro_dist = dist;
-    this->modificado = false;
+    this->massa_sub = subconj->massa_sub + star.get_massa();
 
-    if(subconj.massa_subsistema > star.get_massa()){
-        this->subsistema_maior = &subconj;
-        this->estrela_menor = &star;
+    if(subconj->massa_sub > star.get_massa()){
+        this->sub_maior = std::move(subconj);
+        this->id_menor_estrela = star_id;
 
         return;
     }
 
-    this->subsistema_menor = &subconj;
-    this->estrela_maior = &star;
+    this->sub_menor = std::move(subconj);
+    this->id_maior_estrela = star_id;
 }
-No::No(No & subconj1, No & subconj2, const double & dist){
+No::No(std::unique_ptr<No> &subconj1, std::unique_ptr<No> &subconj2){//, const double & dist){
 
-    this->massa_subsistema = subconj1.massa_subsistema + subconj2.massa_subsistema;
-    this->membro_dist = dist;
-    this->modificado = false;
+    this->massa_sub = subconj1->massa_sub + subconj2->massa_sub;
 
-    if(subconj1.massa_subsistema > subconj2.massa_subsistema){
-        this->subsistema_maior = &subconj1;
-        this->subsistema_menor = &subconj2;
+    if(subconj1->massa_sub > subconj2->massa_sub){
+        this->sub_maior = std::move(subconj1);
+        this->sub_menor = std::move(subconj2);
 
         return;
     }
 
-    this->subsistema_maior = &subconj2;
-    this->subsistema_menor = &subconj1;
+    this->sub_maior = std::move(subconj2);
+    this->sub_menor = std::move(subconj1);
+}
+
+void No::get_estrelas_id(int &major_id, int &menor_id)const{
+
+    major_id = this->id_maior_estrela;
+    menor_id = this->id_menor_estrela;
+
+}
+
+//Pseudo_no construtor.
+Pseudo_no::Pseudo_no(std::unique_ptr<No> &original, const double massa){
+    this->no_original = original.get();
+    this->mass = massa;
 }
