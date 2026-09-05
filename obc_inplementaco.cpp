@@ -42,12 +42,12 @@ Orbita calcula_orbita(float apoastro_ou_periastro, float excentricidade, bool ca
 }
 
 
-Estrela::Estrela(std::string &Nome, float &Massa, float &raio, int &Temp, char &c){
+Estrela::Estrela(const std::string &Nome,const std::string &tip,const float &Massa,const float &raio,const int &Temp){
     this->m_nome = Nome;
+    this->m_tipo = tip;
     this->define_massa(Massa);
     this->define_raio(raio);
     this->m_temperatura = Temp;
-    this->m_classe = c;
 }
 
 Estrela::~Estrela(){}
@@ -63,6 +63,9 @@ void Estrela::set_orbita(const Orbita &orbt){
 std::string Estrela::get_nome()const{
     return this->m_nome;
 }
+std::string Estrela::get_tipo()const{
+    return this->m_tipo;
+}
 Orbita Estrela::get_orbita()const{
     return this->orbt;
 }
@@ -74,9 +77,6 @@ float Estrela::get_raio()const{
 }
 int Estrela::get_temperatura()const{
     return this->m_temperatura;
-}
-char Estrela::get_classe()const{
-    return this->m_classe;
 }
 
 
