@@ -2,6 +2,8 @@
 #include <random>
 #include <vector>
 #include <stdlib.h>
+#include <iomanip>
+#include <sstream>
 #include "sistema_arvore.hpp"
 //||\n\033[0m?
    
@@ -10,10 +12,10 @@ std::string nome(std::mt19937 &mt);
 void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema);
 
 //Gera proceduralmente as orbitas e hierarquia do sistema.
-float randon_excentri(std::mt19937 &mt);
-float randon_dist(std::mt19937 &mt, float menor_dist_pos, float maior_dist_pos);
-float monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2);
-float monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela);
+double randon_excentri(std::mt19937 &mt);
+double randon_dist(std::mt19937 &mt, double menor_dist_pos, double maior_dist_pos);
+double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2);
+double monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela);
 
 //Classifica as estrelas de acordo com suas massas.
 void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool binario = true);
@@ -21,9 +23,10 @@ void classifica_trinarios(std::vector<Estrela> &sistema);
 void classifica_estrelas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps_list);
 
 //Revela o sistema no terminal.
+std::string formata_cientifico(double valor);//converte numeros de notação centifica par string.
 void imprime_orbita(const Orbita &orbit, const std::string & bari);
 void imp_estrela(Estrela &Estrela,  const std::string & bari);
-void imprime_sistema(std::vector<Estrela> &list, No * sub, int &poss);
+void imprime_sistema(std::vector<Estrela> &list, No * sub);
 
 int main(){//em desenvolvimento...
     std::vector<Estrela> sistema_estelar;
@@ -110,7 +113,7 @@ int main(){//em desenvolvimento...
 
         std::uniform_int_distribution<int> sorte(0,1);
         
-        float dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);
+        double dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);
         auto no_raiz = std::make_unique<No>(sistema_estelar[0], 0, sistema_estelar[1], 1, dist);
         list_pseudo.emplace_back(no_raiz, std::max(sistema_estelar[0].get_massa(), sistema_estelar[1].get_massa()));
 
@@ -153,15 +156,14 @@ int main(){//em desenvolvimento...
         classifica_estrelas(sistema_estelar, list_pseudo);
         list_pseudo.clear();
 
-        i = 0;
-        imprime_sistema(sistema_estelar, no_raiz.get(), i);
+        imprime_sistema(sistema_estelar, no_raiz.get());
 
         break;
     }
 
     sistema_estelar.clear();
 
-    std::cout << "\n\n\033[32mProgama finalizado\033[0m";
+    std::cout << "\n\n\033[32mPrograma finalizado\033[0m";
     return 0;
 }
 
@@ -200,9 +202,9 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
     std::uniform_int_distribution<int> de_um_a_cem(0, 100);
     std::string _nome = nome(mt);
     std::string _tipo = "";
-    float _raio = 0.0;
-    float _massa = 0.0;
-    //float _lumi = 0.0f;
+    double _raio = 0.0;
+    double _massa = 0.0;
+    //double _lumi = 0.0f;
     int tipo = 0, _temp = 0;
     const int capacidade = sistema.capacity();
 
@@ -210,10 +212,10 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
         tipo = de_um_a_cem(mt);
 
         if(tipo < 50){//M
-            std::uniform_real_distribution<float> raio(0.1f, 0.7f);
-            std::uniform_real_distribution<float> massa(0.0175f, 0.5f);
+            std::uniform_real_distribution<double> raio(0.1f, 0.7f);
+            std::uniform_real_distribution<double> massa(0.0175f, 0.5f);
             std::uniform_int_distribution<int> temp(1700, 3200);
-            //std::uniform_real_distribution<float> luz(0.075f, 0.1f);
+            //std::uniform_real_distribution<double> luz(0.075f, 0.1f);
             //_lumi = luz(*mt);
             _raio = raio(mt);
             _massa = massa(mt);
@@ -221,9 +223,9 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
             _tipo = "\033[31mAna Vermelha\033[0m";
     
         }else if(tipo >= 50 && tipo < 70){// k
-            std::uniform_real_distribution<float> raio(0.7f, 0.96f);
-            std::uniform_real_distribution<float> massa(0.5f, 0.8f);
-            //std::uniform_real_distribution<float> luz(0.1f, 0.6f);
+            std::uniform_real_distribution<double> raio(0.7f, 0.96f);
+            std::uniform_real_distribution<double> massa(0.5f, 0.8f);
+            //std::uniform_real_distribution<double> luz(0.1f, 0.6f);
             std::uniform_int_distribution<int> temp(3600, 5000);
             //_lumi = luz(*mt);
             _raio = raio(mt);
@@ -232,9 +234,9 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
             _tipo = "\033[93mAna Laranja\033[0m";
     
         }else if(tipo >= 70 && tipo < 80){// G
-            std::uniform_real_distribution<float> raio(0.84f, 1.15f);
-            std::uniform_real_distribution<float> massa(0.8f, 1.2f);
-            //std::uniform_real_distribution<float> luz(0.5f, 2.0f);
+            std::uniform_real_distribution<double> raio(0.84f, 1.15f);
+            std::uniform_real_distribution<double> massa(0.8f, 1.2f);
+            //std::uniform_real_distribution<double> luz(0.5f, 2.0f);
             std::uniform_int_distribution<int> temp(5000, 5800);
             _raio = raio(mt);
             _massa = massa(mt);
@@ -243,9 +245,9 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
             _tipo = "\033[33mAna Amarela\033[0m";
     
         }else if(tipo >= 80 && tipo < 89){// F
-            std::uniform_real_distribution<float> raio(1.15f, 10.0f);
-            std::uniform_real_distribution<float> massa(1.2f, 1.7f);
-            //std::uniform_real_distribution<float> luz(1.5f, 5.0f);
+            std::uniform_real_distribution<double> raio(1.15f, 10.0f);
+            std::uniform_real_distribution<double> massa(1.2f, 1.7f);
+            //std::uniform_real_distribution<double> luz(1.5f, 5.0f);
             std::uniform_int_distribution<int> temp(5800, 7300);
             _raio = raio(mt);
             _massa = massa(mt);
@@ -254,9 +256,9 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
             _tipo = "\033[37mSubgigante\033[0m";
     
         }else if(tipo >= 89 && tipo < 95){// A
-            std::uniform_real_distribution<float> raio(10.0f, 100.0f);
-            std::uniform_real_distribution<float> massa(1.7f, 2.1f); 
-            //std::uniform_real_distribution<float> luz(5.0f, 50.0f);
+            std::uniform_real_distribution<double> raio(10.0f, 100.0f);
+            std::uniform_real_distribution<double> massa(1.7f, 2.1f); 
+            //std::uniform_real_distribution<double> luz(5.0f, 50.0f);
             std::uniform_int_distribution<int> temp(7300, 9700);
             _raio = raio(mt);
             _massa = massa(mt);
@@ -265,8 +267,8 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
             _tipo = "\033[34mTipo 'A' Gigante\033[0m";
     
         }else if(tipo >= 95 && tipo < 98){// B6
-            std::uniform_real_distribution<float> raio(100.0f, 1000.0f);
-            std::uniform_real_distribution<float> massa(2.0f, 16.0f);
+            std::uniform_real_distribution<double> raio(100.0f, 1000.0f);
+            std::uniform_real_distribution<double> massa(2.0f, 16.0f);
             //std::uniform_int_distribution<int> luz(1000, 100000);
             std::uniform_int_distribution<int> temp(9700, 29700);
             _raio = raio(mt);
@@ -276,8 +278,8 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
             _tipo = "\033[36mSupergigante\033[0m";
     
         }else{// O
-            std::uniform_real_distribution<float> raio(1000.0f, 2500.0f);
-            std::uniform_real_distribution<float> massa(16.0f, 50.0f);
+            std::uniform_real_distribution<double> raio(1000.0f, 2500.0f);
+            std::uniform_real_distribution<double> massa(16.0f, 50.0f);
             //std::uniform_int_distribution<int> luz(100000, 1000000);
             std::uniform_int_distribution<int> temp(29700, 100000);
             _raio = raio(mt);
@@ -291,23 +293,23 @@ void estrelas_aleatorias(std::mt19937 &mt, std::vector<Estrela> &sistema){
 }
 
 
-float randon_excentri(std::mt19937 &mt){
+double randon_excentri(std::mt19937 &mt){
     std::uniform_int_distribution<int> numeros(10, 70);
-    float n = static_cast<float>(numeros(mt));
+    double n = static_cast<double>(numeros(mt));
     return n / 100.0f;
 }
-float randon_dist(std::mt19937 &mt, float menor_dist_pos, float maior_dist_pos){
-    std::uniform_real_distribution<float> dist(menor_dist_pos, maior_dist_pos);
+double randon_dist(std::mt19937 &mt, double menor_dist_pos, double maior_dist_pos){
+    std::uniform_real_distribution<double> dist(menor_dist_pos, maior_dist_pos);
     return dist(mt);
 }
-float monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela){
+double monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela){
     
     if(sub_conj == nullptr)return 0.1f;
 
-    float raio_de_Hill = sub_conj->membro_dist * 2.4f;
-    float excent = randon_excentri(mt);
+    double raio_de_Hill = sub_conj->membro_dist * 2.4f;
+    double excent = randon_excentri(mt);
     
-    float distancia = calculo_distancia_pela_esfera_de_Hill(raio_de_Hill, excent, sub_conj->massa_sub, estrela.get_massa());
+    double distancia = calculo_distancia_pela_esfera_de_Hill(raio_de_Hill, excent, sub_conj->massa_sub, estrela.get_massa());
 
     if(estrela.get_massa() < sub_conj->massa_sub * 0.3f){// evita que uma estrela menos massiva passe entre o par binario
         distancia = randon_dist(mt, distancia * 2.0f, distancia * 15.0f);
@@ -315,20 +317,20 @@ float monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela){
     }
 
     if(sub_conj->massa_sub > estrela.get_massa()){
-        float maior_valor = sub_conj->massa_sub;
-        float menor_valor = estrela.get_massa();
+        double maior_valor = sub_conj->massa_sub;
+        double menor_valor = estrela.get_massa();
 
-        float apoastro_1 = distancia * (maior_valor /(maior_valor + menor_valor));
-        float apoastro_2 = distancia - apoastro_1;
+        double apoastro_1 = distancia * (maior_valor /(maior_valor + menor_valor));
+        double apoastro_2 = distancia - apoastro_1;
 
         estrela.set_orbita(calcula_orbita(apoastro_1, excent, true));
         sub_conj->orbt = calcula_orbita(apoastro_2, excent, true);
     }else{
-        float maior_valor = sub_conj->massa_sub;
-        float menor_valor = estrela.get_massa();
+        double maior_valor = sub_conj->massa_sub;
+        double menor_valor = estrela.get_massa();
 
-        float apoastro_1 = distancia * (maior_valor /(maior_valor + menor_valor));
-        float apoastro_2 = distancia - apoastro_1;
+        double apoastro_1 = distancia * (maior_valor /(maior_valor + menor_valor));
+        double apoastro_2 = distancia - apoastro_1;
 
         sub_conj->orbt = calcula_orbita(apoastro_1, excent, true);
         estrela.set_orbita(calcula_orbita(apoastro_2, excent, true));
@@ -336,19 +338,19 @@ float monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela){
 
     return distancia;
 }
-float monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){// essa foi desafiadora
+double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){// essa foi desafiadora
 
-    float menor_valor = estrela1.get_raio() + estrela2.get_raio(); 
-    float maior_valor = menor_valor * 90.0f;
-    float dist_media_entre_pares = randon_dist(mt, menor_valor, maior_valor);
-    float exc = randon_excentri(mt);
+    double menor_valor = estrela1.get_raio() + estrela2.get_raio(); 
+    double maior_valor = menor_valor * 90.0f;
+    double dist_media_entre_pares = randon_dist(mt, menor_valor, maior_valor);
+    double exc = randon_excentri(mt);
 
     if(estrela1.get_massa() > estrela2.get_massa()){
         maior_valor = estrela1.get_massa();
         menor_valor = estrela2.get_massa();
 
-        float apoastro_1 =  dist_media_entre_pares * (maior_valor /(maior_valor + menor_valor));
-        float apoastro_2 = dist_media_entre_pares - apoastro_1;
+        double apoastro_1 =  dist_media_entre_pares * (maior_valor /(maior_valor + menor_valor));
+        double apoastro_2 = dist_media_entre_pares - apoastro_1;
 
         estrela2.set_orbita(calcula_orbita(apoastro_1, exc, true));
         estrela1.set_orbita(calcula_orbita(apoastro_2, exc, true));
@@ -357,8 +359,8 @@ float monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){// e
         maior_valor = estrela2.get_massa();
         menor_valor = estrela1.get_massa();
 
-        float apoastro_1 = dist_media_entre_pares * (maior_valor /(maior_valor + menor_valor)) ;
-        float apoastro_2 = dist_media_entre_pares - apoastro_1;
+        double apoastro_1 = dist_media_entre_pares * (maior_valor /(maior_valor + menor_valor)) ;
+        double apoastro_2 = dist_media_entre_pares - apoastro_1;
 
         estrela1.set_orbita(calcula_orbita(apoastro_1, exc, true));
         estrela2.set_orbita(calcula_orbita(apoastro_2, exc, true));
@@ -366,17 +368,17 @@ float monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){// e
     
     return dist_media_entre_pares;
 }
-
+/*
 //Em desenvolvimento...
-float monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2){
+double monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2){
 
     if(sub1 == nullptr || sub2 == nullptr){
         std::cout << "\nErro: A função monta_orbitas falhou.";
         return 0.1f;
     }
 
-    float exc = randon_excentri(mt);
-    float Rh = 0.0f;
+    double exc = randon_excentri(mt);
+    double Rh = 0.0f;
 
     if(sub1->massa_sub >= sub2->massa_sub){
         Rh = sub2->membro_dist * 2.5f;
@@ -384,7 +386,7 @@ float monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2){
 
     }
 }
-
+*/
 
 void nomeia_pares_binarios(Estrela &estrela_1, Estrela &estrela_2, bool binario){
     std::string estrela_nome_1 = estrela_1.get_nome();
@@ -490,7 +492,7 @@ void classifica_estrelas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps_
     const int list_size = ps_list.size();
     
     for(int i = 0; i < list_size; i++){
-        float maior = 0.0;
+        double maior = 0.0;
         unsigned int maior_id = 0; 
         int major = -1, menor = -1;
 
@@ -539,39 +541,55 @@ void classifica_estrelas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps_
     }
 }
 
+std::string formata_cientifico(double valor){
+
+    if(valor == 0)return "0";
+
+    int expoente = std::floor(std::log10(std::abs(valor)));
+    double mantissa = valor / std::pow(10, expoente);
+
+    std::stringstream ss;
+
+    ss << std::fixed << std::setprecision(2) << mantissa;
+
+    ss << " x 10^" << expoente;
+
+    return ss.str();
+}
 
 //funções responsaveis pela impressão.
 void imprime_orbita(const Orbita &orbit, const std::string & bari){
-    std::cout << "\nApoastro: " << orbit.apoastro << " metros de distancia do baricento " << bari;
-    std::cout << "\nPeriastro: " << orbit.periastro << " metros de distancia do baricento " << bari;
-    std::cout << "\nexcentricidade: " << orbit.excentricidade;
+    std::cout << " " << std::left << std::setw(16) << "apoastro"       << ": " << formata_cientifico(orbit.apoastro) << " metros de distancia do baricentro " << bari << ";\n";
+    std::cout << " " << std::left << std::setw(16) << "periastro"      << ": " << formata_cientifico(orbit.periastro) << " metros de distancia do baricentro " << bari << ";\n";
+    std::cout << " " << std::left << std::setw(16) << "excentricidade" << ": " << orbit.excentricidade;
 }
 void imp_estrela(Estrela &Estrela,  const std::string & bari){
-    std::cout << "\n\n     Estrela  " << Estrela.get_nome();
-    std::cout << "\nTipo: " << Estrela.get_tipo();
-    std::cout << "\nMassa: " << Estrela.get_massa() << " kg";
-    std::cout << "\nRaio: " << Estrela.get_raio() << " metros";
-    std::cout << "\nTemperatura: " << Estrela.get_temperatura() << " graus celcios";
-    std::cout << "\nPossui a seguinte orbita:\n";
+
+    std::cout << "\n\n";
+    std::cout << "     Estrela  " << Estrela.get_nome() << ":\n";
+    std::cout << " " << std::left << std::setw(16) << "Tipo"        << ": " << Estrela.get_tipo() << "\n";
+    std::cout << " " << std::left << std::setw(16) << "Massa"       << ": " << formata_cientifico(Estrela.get_massa()) << " kg;\n";
+    std::cout << " " << std::left << std::setw(16) << "Raio"        << ": " << formata_cientifico(Estrela.get_raio()) << " metros;\n";
+    std::cout << " " << std::left << std::setw(16) << "Temperatura" << ": " << Estrela.get_temperatura() << " graus celsius;\n";
+
+    std::cout << "\n\033[32mPossui a seguinte orbita:\033[0m\n";
 
     imprime_orbita(Estrela.get_orbita(), bari);
 }
 
 //Preciso melhorar isso aqui.
-void imprime_sistema(std::vector<Estrela> &list, No * sub, int &poss){
+void imprime_sistema(std::vector<Estrela> &list, No * sub){
 
     if(sub == nullptr)return;
 
-    int meu_poss = poss;
-    std::cout << "\n\n===========================================\n";
+    std::cout << "\n\n=============================================================================\n";
     std::cout << "\nSubsistema " << sub->nome << ":";
-    poss++;
 
     int star_maior = 0, star_menor = 0;
     sub->get_estrelas_id(star_maior, star_menor);
 
     if(star_maior >= 0 && star_menor >= 0){
-        std::cout << "\nEsse subsistema possui duas estrelas:\n";
+        std::cout << "\nComposto por duas estrelas:\n";
         std::cout << "\nEstrela mais massiva:";
         imp_estrela(list[star_maior], sub->nome);
 
@@ -581,25 +599,31 @@ void imprime_sistema(std::vector<Estrela> &list, No * sub, int &poss){
         return;
     }
     if(star_menor >= 0 && sub->sub_maior != nullptr){
-        std::cout << "\nPossui uma estrela orbitando o subsistema " << sub->sub_maior->nome << '\n';
+        std::cout << "\nComposto por uma estrela e um subsistema.";
+        
         imp_estrela(list[star_menor], sub->nome);
 
-        std::cout << "\n";
-        imprime_sistema(list, sub->sub_maior.get(), poss);
+        std::cout << ".\n\nSubsistema " << sub->sub_maior->nome;
+
+        std::cout << "\n\033[32mPossui a seguinte orbita:\033[0m\n";
+
+        imprime_orbita(sub->sub_maior->orbt, sub->nome);
+        
+        imprime_sistema(list, sub->sub_maior.get());
 
     }else if(sub->sub_maior != nullptr && sub->sub_menor != nullptr){
-        std::cout << "\nEste subsistema nao possui nenhuma estrela\n";
+        //std::cout << "\n\n";
 
-        imprime_sistema(list, sub->sub_maior.get(), poss);
+        imprime_sistema(list, sub->sub_maior.get());
 
-        imprime_sistema(list, sub->sub_menor.get(), poss);
+        imprime_sistema(list, sub->sub_menor.get());
         
     }else if(star_maior >= 0 && sub->sub_menor != nullptr){
         std::cout << "\nPossui uma estrela orbitando o subsistema " << sub->sub_menor->nome << '\n';
    
         imp_estrela(list[star_maior], sub->nome);
 
-        imprime_sistema(list, sub->sub_menor.get(), poss);
+        imprime_sistema(list, sub->sub_menor.get());
     }
 }
 

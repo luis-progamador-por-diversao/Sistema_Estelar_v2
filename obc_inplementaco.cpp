@@ -1,14 +1,14 @@
-#include <cmath>
+
 #include "objetos_celestes.hpp"
 //||\n\033[0m?
-float calculo_distancia_pela_esfera_de_Hill(float Raio_de_Hill, float excentricidade, float massa_menor, float Massa_maior){
+double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, double excentricidade, double massa_menor, double Massa_maior){
 
-    float distancia = Raio_de_Hill / ((1.0 - excentricidade) * std::cbrt((massa_menor/(3.0 * Massa_maior))));
+    double distancia = Raio_de_Hill / ((1.0 - excentricidade) * std::cbrt((massa_menor/(3.0 * Massa_maior))));
     return distancia;
 }
 
 Orbita::Orbita(){}
-Orbita::Orbita(const float &apo_ou_peri,const float &excentri,const bool calcular_periastro){
+Orbita::Orbita(const double &apo_ou_peri,const double &excentri,const bool calcular_periastro){
     
     this->excentricidade = excentri;
 
@@ -22,7 +22,7 @@ Orbita::Orbita(const float &apo_ou_peri,const float &excentri,const bool calcula
     this->periastro = apo_ou_peri;
 }
 
-Orbita calcula_orbita(float apoastro_ou_periastro, float excentricidade, bool calcula_periastro){
+Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool calcula_periastro){
     Orbita orbita;
 
     if(calcula_periastro){
@@ -42,7 +42,7 @@ Orbita calcula_orbita(float apoastro_ou_periastro, float excentricidade, bool ca
 }
 
 
-Estrela::Estrela(const std::string &Nome,const std::string &tip,const float &Massa,const float &raio,const int &Temp){
+Estrela::Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp){
     this->m_nome = Nome;
     this->m_tipo = tip;
     this->define_massa(Massa);
@@ -69,10 +69,10 @@ std::string Estrela::get_tipo()const{
 Orbita Estrela::get_orbita()const{
     return this->orbt;
 }
-float Estrela::get_massa()const{
+double Estrela::get_massa()const{
     return this->m_massa_Kg;
 }
-float Estrela::get_raio()const{
+double Estrela::get_raio()const{
     return this->m_raio_m;
 }
 int Estrela::get_temperatura()const{
@@ -80,50 +80,50 @@ int Estrela::get_temperatura()const{
 }
 
 
-void Estrela::define_massa(float m){
+void Estrela::define_massa(double m){
     this->m_massa_Kg = m * 1.989e30;
 }
-void Estrela::define_raio(float r){
+void Estrela::define_raio(double r){
     this->m_raio_m = r * 6.95e8;
 }
 
 
 
 /*
-float Cauculo_Massivo_da_esfera_de_Hill(float distancia, float excentricidade, float massa_menor, float Massa_maior){
+double Cauculo_Massivo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior){
     //testa se as variaveis fazem sentido
     if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (excentricidade <= 0.0f && excentricidade > 0.9f))){
         throw std::domain_error("Erro: valores informados nao fazem sentido");
     }
 
-    float raio_de_Hill = distancia * ((1 - excentricidade) * (std::cbrt((massa_menor/(3 * (Massa_maior + massa_menor))))));
+    double raio_de_Hill = distancia * ((1 - excentricidade) * (std::cbrt((massa_menor/(3 * (Massa_maior + massa_menor))))));
 
     return raio_de_Hill;
 }
-float Cauculo_da_esfera_de_Hill(float distancia, float excentricidade, float massa_menor, float Massa_maior){
+double Cauculo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior){
     //testa se as variaveis fazem sentido
     if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (excentricidade <= 0.0f && excentricidade > 0.9f))){
         throw std::domain_error("Erro: valores informados nao fazem sentido");
     }
 
     if(excentricidade < 0.20){
-        float raio_de_Hill = distancia * (std::cbrt((massa_menor/(3 * Massa_maior))));
+        double raio_de_Hill = distancia * (std::cbrt((massa_menor/(3 * Massa_maior))));
     
         return raio_de_Hill;
     }
     
-    float raio_de_Hill = distancia * ((1 - excentricidade) * (std::cbrt((massa_menor/(3 * Massa_maior)))));
+    double raio_de_Hill = distancia * ((1 - excentricidade) * (std::cbrt((massa_menor/(3 * Massa_maior)))));
 
     return raio_de_Hill;
 }
 
-float Cauculo_forca_gravitacional(float distancia, float massa1, float massa2){
+double Cauculo_forca_gravitacional(double distancia, double massa1, double massa2){
 
     if(distancia < 0.0)throw std::domain_error("Erro: nao existe distancia negativa");
     if(massa1 <= 0.0)throw std::domain_error("Erro: valor de massa1 e invalido");
     if(massa2 <= 0.0)throw std::domain_error("Erro: valor de massa2 e invalido");
 
-    float forca_gravitacional = 0.0;
+    double forca_gravitacional = 0.0;
 
     forca_gravitacional = (massa1 * massa2 * 6.67e-11) / (std::pow(distancia, 2));
 
@@ -131,7 +131,7 @@ float Cauculo_forca_gravitacional(float distancia, float massa1, float massa2){
 };
 */
 /*
-Planeta::Planeta(float m, float r, char c_t, bool roc){
+Planeta::Planeta(double m, double r, char c_t, bool roc){
     this->m_massa_Kg = m;
     this->m_raio_m = r;
     this->m_classe_tamanho = c_t;

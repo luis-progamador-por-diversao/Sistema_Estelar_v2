@@ -16,13 +16,13 @@ struct No{
     No * volta = nullptr;
     std::unique_ptr<No> sub_menor;
     std::unique_ptr<No> sub_maior;
-    float massa_sub = 0.0;
-    float membro_dist = 0.0;
+    double massa_sub = 0.0;
+    double membro_dist = 0.0;
 
     //Construtores, impedem que a árvore seja montada de forma inadequada.
-    No(Estrela &star1, const int &star1_id, Estrela &star2, const int &star2_id, const float &dist);
-    No(std::unique_ptr<No> &subconj, Estrela &star, const int &star_id, const float &dist);
-    No(std::unique_ptr<No> &subconj1, std::unique_ptr<No> &subconj2);//, const float &dist
+    No(Estrela &star1, const int &star1_id, Estrela &star2, const int &star2_id, const double &dist);
+    No(std::unique_ptr<No> &subconj, Estrela &star, const int &star_id, const double &dist);
+    No(std::unique_ptr<No> &subconj1, std::unique_ptr<No> &subconj2);//, const double &dist
 
     void get_estrelas_id(int &major_id, int &menor_id)const;
 
@@ -34,10 +34,10 @@ private:
 //Auxiliar, e com base nele que o código consegue classificar o sistema.
 struct Pseudo_no{
     No * no_original = nullptr;
-    float mass;
+    double mass;
     bool utilizado = false;
 
-    Pseudo_no(std::unique_ptr<No> &original, const float massa);
+    Pseudo_no(std::unique_ptr<No> &original, const double massa);
 };
 
 
