@@ -9,7 +9,7 @@ double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, double excentr
 struct Orbita{
     double apoastro = 0.0;
     double periastro = 0.0;
-    double excentricidade = 0.0f;
+    double excentricidade = 0.0;
 
     Orbita();
     Orbita(const double &apo_ou_peri, const double &excentri, const bool calcular_periastro);
