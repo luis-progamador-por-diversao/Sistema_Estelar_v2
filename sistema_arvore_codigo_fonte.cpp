@@ -31,9 +31,9 @@ No::No(std::unique_ptr<No> &subconj, Estrela &star, const int &star_id, const do
     this->sub_menor = std::move(subconj);
     this->id_maior_estrela = star_id;
 }
-No::No(std::unique_ptr<No> &subconj1, std::unique_ptr<No> &subconj2){//, const double &dist
+No::No(std::unique_ptr<No> &subconj1, std::unique_ptr<No> &subconj2, const double &dist){
 
-    //this->membro_dist = dist;
+    this->membro_dist = dist;
     this->massa_sub = subconj1->massa_sub + subconj2->massa_sub;
 
     if(subconj1->massa_sub > subconj2->massa_sub){

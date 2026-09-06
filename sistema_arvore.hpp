@@ -22,7 +22,7 @@ struct No{
     //Construtores, impedem que a árvore seja montada de forma inadequada.
     No(Estrela &star1, const int &star1_id, Estrela &star2, const int &star2_id, const double &dist);
     No(std::unique_ptr<No> &subconj, Estrela &star, const int &star_id, const double &dist);
-    No(std::unique_ptr<No> &subconj1, std::unique_ptr<No> &subconj2);//, const double &dist
+    No(std::unique_ptr<No> &subconj1, std::unique_ptr<No> &subconj2, const double &dist);
 
     void get_estrelas_id(int &major_id, int &menor_id)const;
 
