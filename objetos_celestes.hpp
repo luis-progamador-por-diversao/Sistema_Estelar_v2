@@ -2,10 +2,6 @@
 #define OBJETOS_CELESTES_HPP_INCLUDED
 //||\n\033[0m?
 #include <string>
-#include <cmath>
-
-double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, double excentricidade, double massa_menor, double Massa_maior);
-
 struct Orbita{
     double apoastro = 0.0;
     double periastro = 0.0;

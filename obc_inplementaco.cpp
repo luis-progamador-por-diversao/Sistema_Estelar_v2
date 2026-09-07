@@ -1,11 +1,5 @@
-
 #include "objetos_celestes.hpp"
 //||\n\033[0m?
-double calculo_distancia_pela_esfera_de_Hill(double Raio_de_Hill, double excentricidade, double massa_menor, double Massa_maior){
-
-    double distancia = Raio_de_Hill / ((1.0 - excentricidade) * std::cbrt((massa_menor/(3.0 * Massa_maior))));
-    return distancia;
-}
 
 Orbita::Orbita(){}
 Orbita::Orbita(const double &apo_ou_peri,const double &excentri,const bool calcular_periastro){
