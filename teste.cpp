@@ -359,7 +359,7 @@ void random_estrelas(std::mt19937 &mt,std::string _nome, std::vector<Estrela> &s
 double random_excentri(std::mt19937 &mt){
     std::uniform_int_distribution<int> numeros(10, 70);
     double n = static_cast<double>(numeros(mt));
-    return n / 100.0f;
+    return n / 100.0;
 }
 double random_dist(std::mt19937 &mt, double menor_dist_pos, double maior_dist_pos){
     std::uniform_real_distribution<double> dist(menor_dist_pos, maior_dist_pos);
@@ -399,7 +399,7 @@ double monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela){
 
     return distancia;
 }
-double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){// essa foi desafiadora
+double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){
 
     double menor_valor = estrela1.get_raio() + estrela2.get_raio(); 
     double maior_valor = menor_valor * 90.0;
