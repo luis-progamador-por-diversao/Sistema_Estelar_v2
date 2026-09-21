@@ -22,11 +22,11 @@ double monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2);
 
 //Classifica as estrelas de acordo com suas massas.
 void classifica_binarios(Estrela &estrela_1, Estrela &estrela_2);
-void classifica_trinarios(std::vector<Estrela> &sistema);
+void classifica_trinarios(std::vector<Estrela> &sistema, No * raiz);
 void classifica_multiplas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps_list);
 
 //Revela o sistema no terminal.
-std::string formata_cientifico(double valor);//converte números de notação centifica para string.
+std::string formato_cientifico(double valor);//converte números de notação centifica para string.
 void imprime_orbita(const Orbita &orbit, const std::string & bari);
 void imp_estrela(Estrela &Estrela,  const std::string & bari);
 void imprime_sistema(std::vector<Estrela> &list, No * sub);
@@ -35,38 +35,36 @@ void imprime_sistema(std::vector<Estrela> &list, No * sub);
 int main(){
     std::vector<Estrela> sistema_estelar;
     
-    int seed = 0, escolhido = 0;
-    char escolha;
+    int seed = 0;
     
     while(true){ 
+        char escolha;
+
         std::cout << "\n\nPrograma para criar sistemas de estrelas:\n\n";
-        
         std::cout << "\nDigite [1] para escolher uma seed.\nDigite [2] para uma seed aleatoria.\n";
         std::cin.get(escolha);std::cin.ignore();
-        if(escolha == '1' || escolha == '2'){
-            if(escolha == '1'){
-                escolhido = 1;
-            }else if(escolha == '2'){
-                escolhido = 2;
-            }
-            break;
-        }else{
-            system("cls");
-            std::cout << "\n\033[31mNumero imformado e imvalido\033[0m";
-            std::cout << "\ntente outra vez:\n";
-        }
-    }
-    if(escolhido == 1){
-        std::cout << "\nDigite a seed: ";std::cin >> seed; 
-    }else{
-        std::random_device random;
-        seed = random(); 
-    }
-    std::cout << std::endl << "Seed = " << seed;
 
+        if(escolha == '1'){
+            std::cout << "\nDigite a seed: ";std::cin >> seed;
+            
+            break;
+        }
+        if(escolha == '2'){
+            std::random_device random;
+            seed = random();
+
+            break;
+        }
+        
+        system("cls");
+        std::cout << "\n\033[31mNumero imformado e imvalido\033[0m";
+        std::cout << "\ntente outra vez:\n";
+    }
+    
+    std::cout << std::endl << "Seed = " << seed;
     std::mt19937 mt(seed);
     
-    const unsigned int quanti = random_quanti(mt);
+    const unsigned int quanti = 3;// random_quanti(mt);
     sistema_estelar.reserve(quanti);  
     std::string nome_geral = random_nome(mt);
 
@@ -81,22 +79,20 @@ int main(){
             std::cout << "\n\n=============================================================================\n";
             std::cout << "\n                     Sistema " << nome_geral ;
             std::cout << "\n\n=============================================================================\n";
-
             std::cout << "\n     Estrela  " << sistema_estelar[0].get_nome() << ":\n";
-            std::cout << " " << std::left << std::setw(16) << "Tipo"        << ": " << sistema_estelar[0].get_tipo() << "\n";
-            std::cout << " " << std::left << std::setw(16) << "Massa"       << ": " << formata_cientifico(sistema_estelar[0].get_massa()) << " kg;\n";
-            std::cout << " " << std::left << std::setw(16) << "Raio"        << ": " << formata_cientifico(sistema_estelar[0].get_raio()) << " metros;\n";
-            std::cout << " " << std::left << std::setw(16) << "Temperatura" << ": " << sistema_estelar[0].get_temperatura() << " graus celsius;\n";
+            std::cout << "\n Tipo             : " << sistema_estelar[0].get_tipo();
+            std::cout << "\n Massa            : " << formato_cientifico(sistema_estelar[0].get_massa()) << " kg";
+            std::cout << "\n Raio             : " << formato_cientifico(sistema_estelar[0].get_raio()) << " metros";
+            std::cout << "\n Temperatura      : " << sistema_estelar[0].get_temperatura() << " graus celsius";
             
             break;
     
         case 2:{
+            double dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);                                                                        
+            
             classifica_binarios(sistema_estelar[0], sistema_estelar[1]);
            
-            double dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);                                                                        
-           
-            std::cout << "\nDistancia usada nos calculos: " << dist;
-    
+            std::cout << "\nDistancia usada nos calculos: " << formato_cientifico(dist);
             std::cout << "\n\n=============================================================================\n";
             std::cout << "\n                   Sistema binario " << nome_geral ;
             std::cout << "\n\n=============================================================================\n";
@@ -108,16 +104,16 @@ int main(){
             break;
         }
         case 3:{
-            classifica_trinarios(sistema_estelar);
-    
             double dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);
             auto n = std::make_unique<No>(sistema_estelar[0], 0, sistema_estelar[1], 1, dist);
-    
+            
             dist = monta_orbitas(mt, n.get(), sistema_estelar[2]);
             n = std::make_unique<No>(n, sistema_estelar[2], 2, dist);
+            
+            classifica_trinarios(sistema_estelar, n.get());
 
             std::cout << "\n\n=============================================================================\n";
-            std::cout << "\n                  Sistema trinario" << nome_geral ;
+            std::cout << "\n                  Sistema trinario " << nome_geral ;
     
             imprime_sistema(sistema_estelar, n.get());
             
@@ -184,6 +180,7 @@ int main(){
             return -1;
         break;
     }
+    
     std::cout << "\n\n=============================================================================\n";
     sistema_estelar.clear();
 
@@ -483,16 +480,20 @@ void classifica_binarios(Estrela &estrela_1, Estrela &estrela_2){
         
     return;
 }
-void classifica_trinarios(std::vector<Estrela> &sistema){
+void classifica_trinarios(std::vector<Estrela> &sistema, No * raiz){
     
-    if(sistema.size() != 3)return;
-
+    if(sistema.size() != 3 || raiz == nullptr){
+        std::cout << "\nA função 'classifica_trinarios' falhou";
+        return;
+    }
     std::string nome_0 = sistema[0].get_nome();
     std::string nome_1 = sistema[1].get_nome();
     std::string nome_2 = sistema[2].get_nome();
     nome_0.push_back(' ');
     nome_1.push_back(' ');
     nome_2.push_back(' ');
+    
+    raiz->nome = "ABC";
 
     if(sistema[0].get_massa() > sistema[1].get_massa() && sistema[0].get_massa() > sistema[2].get_massa()){
         nome_0.push_back('A');
@@ -504,6 +505,8 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
             sistema[1].set_nome(nome_1);
             sistema[2].set_nome(nome_2);
 
+            raiz->sub_maior->nome = "AB";
+
             return;
         }
 
@@ -511,6 +514,8 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
         nome_2.push_back('B');
         sistema[1].set_nome(nome_1);
         sistema[2].set_nome(nome_2);
+
+        raiz->sub_maior->nome = "AC";
 
         return;
     }
@@ -525,6 +530,8 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
             sistema[0].set_nome(nome_0);
             sistema[2].set_nome(nome_2);
 
+            raiz->sub_maior->nome = "AB";
+
             return;
         }
 
@@ -532,8 +539,16 @@ void classifica_trinarios(std::vector<Estrela> &sistema){
         nome_2.push_back('B');
         sistema[0].set_nome(nome_0);
         sistema[2].set_nome(nome_2);
+        
+        raiz->sub_maior->nome = "AC";
 
         return;
+    }
+
+    if(raiz->sub_maior != nullptr){
+        raiz->sub_maior->nome = "BC";
+    }else{
+        raiz->sub_menor->nome = "BC";
     }
 
     nome_2.push_back('A');
@@ -612,7 +627,7 @@ void classifica_multiplas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps
 }
 
 //funções responsaveis pela impressão.
-std::string formata_cientifico(double valor){
+std::string formato_cientifico(double valor){
 
     if(valor == 0)return "0";
 
@@ -626,20 +641,19 @@ std::string formata_cientifico(double valor){
     return ss.str();
 }
 void imprime_orbita(const Orbita &orbit, const std::string & bari){
-    std::cout << " " << std::left << std::setw(16) << "apoastro"       << ": " << formata_cientifico(orbit.apoastro) << " metros de distancia do baricentro " << bari << ";\n";
-    std::cout << " " << std::left << std::setw(16) << "periastro"      << ": " << formata_cientifico(orbit.periastro) << " metros de distancia do baricentro " << bari << ";\n";
-    std::cout << " " << std::left << std::setw(16) << "excentricidade" << ": " << orbit.excentricidade;
+    std::cout << "\n apoastro         : " << formato_cientifico(orbit.apoastro) << " metros de distancia do baricentro " << bari;
+    std::cout << "\n periastro        : " << formato_cientifico(orbit.periastro) << " metros de distancia do baricentro " << bari;
+    std::cout << "\n excentricidade   : " << orbit.excentricidade;
 }
 void imp_estrela(Estrela &Estrela,  const std::string & bari){
 
-    std::cout << "\n\n";
-    std::cout << "     Estrela  " << Estrela.get_nome() << ":\n";
-    std::cout << " " << std::left << std::setw(16) << "Tipo"        << ": " << Estrela.get_tipo() << "\n";
-    std::cout << " " << std::left << std::setw(16) << "Massa"       << ": " << formata_cientifico(Estrela.get_massa()) << " kg;\n";
-    std::cout << " " << std::left << std::setw(16) << "Raio"        << ": " << formata_cientifico(Estrela.get_raio()) << " metros;\n";
-    std::cout << " " << std::left << std::setw(16) << "Temperatura" << ": " << Estrela.get_temperatura() << " graus celsius;\n";
+    std::cout << "\n\n     Estrela  " << Estrela.get_nome() << ":";
+    std::cout << "\n Tipo             : " << Estrela.get_tipo();
+    std::cout << "\n Massa            : " << formato_cientifico(Estrela.get_massa()) << " kg";
+    std::cout << "\n Raio             : " << formato_cientifico(Estrela.get_raio()) << " metros";
+    std::cout << "\n Temperatura      : " << Estrela.get_temperatura() << " graus celsius";
 
-    std::cout << "\n\033[32mPossui a seguinte orbita:\033[0m\n";
+    std::cout << "\n\n\033[32mPossui a seguinte orbita:\033[0m\n";
 
     imprime_orbita(Estrela.get_orbita(), bari);
 }
