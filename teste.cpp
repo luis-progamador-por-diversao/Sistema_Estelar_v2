@@ -64,7 +64,7 @@ int main(){
     std::cout << std::endl << "Seed = " << seed;
     std::mt19937 mt(seed);
     
-    const unsigned int quanti = 3;// random_quanti(mt);
+    const unsigned int quanti = random_quanti(mt);
     sistema_estelar.reserve(quanti);  
     std::string nome_geral = random_nome(mt);
 
@@ -583,13 +583,12 @@ void classifica_multiplas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps
 
         for(int l = 0; l < list_size; l++){
 
-            if(!ps_list[l].utilizado){
+            if(ps_list[l].utilizado)continue;
 
-                if(maior < ps_list[l].mass){
-                    maior = ps_list[l].mass; 
-                    maior_id = l;
-                }
-            }
+            if(maior < ps_list[l].mass){
+                maior = ps_list[l].mass; 
+                maior_id = l;
+            }  
         }
 
         ps_list[maior_id].utilizado = true;
