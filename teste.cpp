@@ -1,16 +1,156 @@
 #include <iostream>
+#include <algorithm>
 #include <random>
 #include <vector>
 #include <stdlib.h>
 #include <iomanip>
 #include <sstream>
 #include <cmath>
+#include <array>
+#include <string>
 #include "sistema_arvore.hpp"
 //||\n\033[0m?
    
 //Aleatoriza estrelas e nome.
 std::string random_nome(std::mt19937 &mt);
-void random_estrelas(std::mt19937 &mt,std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size);
+namespace {
+
+const double T_SOL = 5778.0;           // K
+const double IDADE_UNIVERSO = 13.0e9;  // anos
+const double T_MS_MINIMO = 3.0e6;      // anos (massas altas "saturam")
+
+struct FaixaMassa { double min, max, alfa; };  // p(m) proporcional a m^-alfa
+
+const std::array<FaixaMassa, 7> FAIXAS = {{
+    {0.08, 0.45, 1.3},   // M
+    {0.45, 0.80, 2.35},  // K
+    {0.80, 1.04, 2.35},  // G
+    {1.04, 1.40, 2.35},  // F
+    {1.40, 2.10, 2.35},  // A
+    {2.10, 16.0, 2.35},  // B
+    {16.0, 50.0, 2.35}   // O
+}};
+// pesos de sorteio da classe (ajuste à vontade; o real é bem mais extremo)
+const std::array<double, 7> PESOS = {{60.0, 15.0, 10.0, 7.0, 4.0, 3.0, 1.0}};
+
+enum class Lum { SeqPrincipal, Subgigante, Gigante, Supergigante, Hipergigante };
+struct Resultado { double lumi; double raio; double temp; };
+
+double uniforme(std::mt19937 &mt, double a, double b){
+    return std::uniform_real_distribution<double>(a, b)(mt);
+}
+double log_uniforme(std::mt19937 &mt, double a, double b){
+    return std::exp(uniforme(mt, std::log(a), std::log(b)));
+}
+double sorteia_massa(std::mt19937 &mt, const FaixaMassa &f){
+    const double e = 1.0 - f.alfa;
+    const double a = std::pow(f.min, e), b = std::pow(f.max, e);
+    return std::pow(a + uniforme(mt, 0.0, 1.0) * (b - a), 1.0 / e);
+}
+
+// Sequência principal (aproximações), massa em M☉
+double lum_ms(double m){   // L☉
+    if(m < 0.43) return 0.23 * std::pow(m, 2.3);
+    if(m < 2.0)  return std::pow(m, 4.0);
+    return 1.4 * std::pow(m, 3.5);
+}
+double raio_ms(double m){  // R☉
+    if(m < 1.0) return std::pow(m, 0.9);
+    if(m < 2.0) return std::pow(m, 0.8);
+    return 1.74 * std::pow(m / 2.0, 0.57);
+}
+double temp_de(double lumi, double raio){  // K (Stefan-Boltzmann)
+    return T_SOL * std::pow(lumi / (raio * raio), 0.25);
+}
+double raio_de(double lumi, double temp){  // R☉
+    const double r = T_SOL / temp;
+    return std::sqrt(lumi) * r * r;
+}
+double tempo_ms(double m){  // anos na sequência principal
+    return std::max(1.0e10 * std::pow(m, -2.5), T_MS_MINIMO);
+}
+
+Lum define_estagio(double m, double idade){
+    const double f = idade / tempo_ms(m);
+    if(f < 1.0) return Lum::SeqPrincipal;
+    const double x = (f - 1.0) / 0.10;  // progresso pós-SP (0 a 1)
+    if(x < 0.20) return Lum::Subgigante;
+    if(m < 8.0)  return Lum::Gigante;
+    if(m < 25.0 || x < 0.70) return Lum::Supergigante;
+    return Lum::Hipergigante;
+}
+
+Resultado calcula_estrela(std::mt19937 &mt, double m, Lum est){
+    const double L_ms = lum_ms(m), R_ms = raio_ms(m);
+    const double T_ms = temp_de(L_ms, R_ms);
+    const double L_edd = 3.2e4 * m;  // limite de Eddington (L☉)
+    Resultado r{L_ms, R_ms, T_ms};
+
+    switch(est){
+        case Lum::SeqPrincipal: break;
+        case Lum::Subgigante:
+            r.lumi = L_ms * uniforme(mt, 1.2, 2.5);
+            r.temp = T_ms * uniforme(mt, 0.75, 0.95);
+            break;
+        case Lum::Gigante:
+            r.lumi = L_ms * uniforme(mt, 5.0, 50.0);
+            r.temp = std::max(3400.0, T_ms * uniforme(mt, 0.5, 0.8));
+            break;
+        case Lum::Supergigante:
+            r.lumi = L_ms * uniforme(mt, 3.0, 20.0);
+            r.temp = log_uniforme(mt, 3500.0, 0.7 * T_ms);
+            break;
+        case Lum::Hipergigante:
+            r.lumi = L_edd * uniforme(mt, 0.3, 1.0);
+            r.temp = log_uniforme(mt, 3500.0, 25000.0);
+            break;
+    }
+    if(est != Lum::SeqPrincipal){
+        r.lumi = std::min(r.lumi, L_edd);
+        r.raio = raio_de(r.lumi, r.temp);  // T e L mandam; R sai da fórmula
+    }
+    return r;
+}
+
+char letra_por_temp(double T){
+    if(T >= 30000) return 'O';
+    if(T >= 10000) return 'B';
+    if(T >= 7500)  return 'A';
+    if(T >= 6000)  return 'F';
+    if(T >= 5200)  return 'G';
+    if(T >= 3700)  return 'K';
+    return 'M';
+}
+const char* cor(char c){
+    switch(c){
+        case 'M': return "\033[31m";
+        case 'K': return "\033[93m";
+        case 'G': return "\033[33m";
+        case 'F': return "\033[37m";
+        case 'A': return "\033[34m";
+        case 'B': return "\033[36m";
+        default:  return "\033[95m";
+    }
+}
+std::string monta_tipo(int idx_classe, Lum est, double T){
+    static const char LETRAS[] = "MKGFABO";
+    static const char* NOMES_SP[7] = {"Ana Vermelha", "Ana Laranja", "Ana Amarela",
+        "Ana Amarelo-Branca", "Ana Branca", "Estrela Azul-Branca", "Estrela Azul"};
+    if(est == Lum::SeqPrincipal)
+        return std::string(cor(LETRAS[idx_classe])) + NOMES_SP[idx_classe] + "\033[0m";
+
+    const char letra = letra_por_temp(T);
+    const char* nome = (est == Lum::Subgigante)   ? "Subgigante"
+                     : (est == Lum::Gigante)      ? "Gigante"
+                     : (est == Lum::Supergigante) ? "Supergigante" : "Hipergigante";
+    return std::string(cor(letra)) + nome + " tipo " + letra + "\033[0m";
+}
+
+} // namespace
+
+void random_estrelas(std::mt19937 &mt, std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size);
+
+//void random_estrelas(std::mt19937 &mt,std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size);
 unsigned int random_quanti(std::mt19937 & mt);
 
 //Gera proceduralmente as orbitas e hierarquia do sistema.
@@ -64,7 +204,7 @@ int main(){
     std::cout << std::endl << "Seed = " << seed;
     std::mt19937 mt(seed);
     
-    const unsigned int quanti = random_quanti(mt);
+    const unsigned int quanti = 3;//random_quanti(mt);
     sistema_estelar.reserve(quanti);  
     std::string nome_geral = random_nome(mt);
 
@@ -83,6 +223,7 @@ int main(){
             std::cout << "\n Tipo             : " << sistema_estelar[0].get_tipo();
             std::cout << "\n Massa            : " << formato_cientifico(sistema_estelar[0].get_massa()) << " kg";
             std::cout << "\n Raio             : " << formato_cientifico(sistema_estelar[0].get_raio()) << " metros";
+            std::cout << "\n Luminosidade     : " << formato_cientifico(sistema_estelar[0].get_luminosidade()) << " watts";
             std::cout << "\n Temperatura      : " << sistema_estelar[0].get_temperatura() << " graus celsius";
             
             break;
@@ -140,7 +281,7 @@ int main(){
 
                     dist = monta_orbitas(mt, sistema_estelar[id1], sistema_estelar[id2]);
                     auto p = std::make_unique<No>(sistema_estelar[id1], id1, sistema_estelar[id2], id2, dist);
-                    list_pseudo.emplace_back(p, std::max(sistema_estelar[id1].get_massa(), sistema_estelar[id2].get_massa()));
+                    list_pseudo.emplace_back(p, std::max(sistema_estelar[id1].get_luminosidade(), sistema_estelar[id2].get_luminosidade()));
     
                     dist = monta_orbitas(mt, no_raiz.get(), p.get());
                     no_raiz = std::make_unique<No>(no_raiz, p, dist);
@@ -153,7 +294,7 @@ int main(){
                     dist = monta_orbitas(mt, no_raiz.get(), sistema_estelar[i]);
                     no_raiz = std::make_unique<No>(no_raiz, sistema_estelar[i], i, dist);
     
-                    list_pseudo.emplace_back(no_raiz, sistema_estelar[i].get_massa());
+                    list_pseudo.emplace_back(no_raiz, sistema_estelar[i].get_luminosidade());
     
                     if(no_raiz->sub_maior != nullptr){
                         no_raiz->sub_maior->volta = no_raiz.get();
@@ -240,115 +381,31 @@ std::string random_nome(std::mt19937 &mt){
     Nome.pop_back();
     return Nome;
 }
-void random_estrelas(std::mt19937 &mt,std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size){ 
-    std::uniform_int_distribution<int> de_um_a_cem(0, 100);
-    std::string _tipo = "";
-    double _raio = 0.0;
-    double _massa = 0.0;
-    double _lumi = 0.0;
-    int tipo = 0, _temp = 0;
+void random_estrelas(std::mt19937 &mt, std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size){
+    if(star_size == 0) return;
+    std::discrete_distribution<int> sorteia_classe(PESOS.begin(), PESOS.end());
 
-    for(int i = 0; i < star_size; i++){
-        tipo = de_um_a_cem(mt);
+    // 1) classes e massas
+    std::vector<int> classe(star_size);
+    std::vector<double> massa(star_size);
+    double m_max = 0.0;
+    for(unsigned int i = 0; i < star_size; i++){
+        classe[i] = sorteia_classe(mt);
+        massa[i]  = sorteia_massa(mt, FAIXAS[classe[i]]);
+        m_max = std::max(m_max, massa[i]);
+    }
 
-        if(tipo < 50){// M - Anã Vermelha
-            std::uniform_real_distribution<double> massa(0.08, 0.45);
-            _massa = massa(mt);
-            _raio = _massa;
-            _lumi = std::pow(_massa, 2.3); 
-            double temp_calc = 5778.0 * std::pow(_lumi / std::pow(_raio, 2), 0.25);
-            _temp = static_cast<int>(temp_calc);
-            
-            // Clamping de segurança para manter dentro dos limites da classe M
-            if(_temp < 1700) _temp = 1700;
-            if(_temp > 3200) _temp = 3200;
+    // 2) idade única do sistema, ligada à estrela mais massiva
+    const double t_top = tempo_ms(m_max);
+    const double t_ref = std::min(t_top, IDADE_UNIVERSO);
+    const double u_max = (t_top > IDADE_UNIVERSO) ? 1.0 : 1.10;
+    const double idade = uniforme(mt, 0.05, u_max) * t_ref;
 
-            _tipo = "\033[31mAna Vermelha\033[0m";
-    
-        }else if(tipo >= 50 && tipo < 70){// K - Anã Laranja
-            std::uniform_real_distribution<double> massa(0.45, 0.8);
-            _massa = massa(mt);
-            
-            _raio = std::pow(_massa, 0.8);
-            _lumi = std::pow(_massa, 4.0);
-            
-            double temp_calc = 5778.0 * std::pow(_lumi / std::pow(_raio, 2), 0.25);
-            _temp = static_cast<int>(temp_calc);
-            
-            if(_temp < 3600) _temp = 3600;
-            if(_temp > 5000) _temp = 5000;
-            
-            _tipo = "\033[93mAna Laranja\033[0m";
-    
-        }else if(tipo >= 70 && tipo < 80){// G - Anã Amarela
-            std::uniform_real_distribution<double> massa(0.8, 1.04);
-            _massa = massa(mt);
-            
-            _raio = _massa; 
-            _lumi = std::pow(_massa, 4.0);
-            
-            double temp_calc = 5778.0 * std::pow(_lumi / std::pow(_raio, 2), 0.25);
-            _temp = static_cast<int>(temp_calc);
-            
-            if(_temp < 5000) _temp = 5000;
-            if(_temp > 5800) _temp = 5800;
-            
-            _tipo = "\033[33mAna Amarela\033[0m";
-    
-        }else if(tipo >= 80 && tipo < 89){// F - Subgigante
-            std::uniform_real_distribution<double> massa(1.04, 1.4);
-            _massa = massa(mt);
-            
-            std::uniform_real_distribution<double> fator_expansao(1.15, 2.5);
-            _raio = std::pow(_massa, 0.7) * fator_expansao(mt);
-            _lumi = std::pow(_massa, 4.3);
-            
-            double temp_calc = 5778.0 * std::pow(_lumi / std::pow(_raio, 2), 0.25);
-            _temp = static_cast<int>(temp_calc);
-            
-            if(_temp < 5800) _temp = 5800;
-            if(_temp > 7300) _temp = 7300;
-            
-            _tipo = "\033[37mSubgigante\033[0m";
-    
-        }else if(tipo >= 89 && tipo < 95){// A - Tipo 'A' Gigante
-            std::uniform_real_distribution<double> massa(1.4, 2.1); 
-            _massa = massa(mt);
-            
-            std::uniform_real_distribution<double> fator_gigante(5.0, 15.0);
-            _raio = fator_gigante(mt);
-            
-            std::uniform_int_distribution<int> temp(7300, 9700);
-            _temp = temp(mt); 
-            
-            _tipo = "\033[34mTipo 'A' Gigante\033[0m";
-    
-        }else if(tipo >= 95 && tipo < 98){// B - Supergigante
-            std::uniform_real_distribution<double> massa(2.0, 16.0);
-            _massa = massa(mt);
-
-            std::uniform_real_distribution<double> raio(20.0, 150.0);
-            _raio = raio(mt);
-
-            std::uniform_int_distribution<int> temp(9700, 29700);
-            _temp = temp(mt); 
-
-            _tipo = "\033[36mSupergigante\033[0m";
-    
-        }else{// O - Hipergigante
-            std::uniform_real_distribution<double> massa(16.0, 50.0);
-            _massa = massa(mt);
-            
-            std::uniform_real_distribution<double> raio(150.0, 800.0);
-            _raio = raio(mt);
-            
-            std::uniform_int_distribution<int> temp(29700, 50000);
-            _temp = temp(mt); 
-            
-            _tipo = "\033[95mHipergigante\033[0m";
-        }
-        
-        sistema.emplace_back(_nome, _tipo, _massa, _raio, _temp);
+    // 3) L, R, T e rótulo de cada estrela
+    for(unsigned int i = 0; i < star_size; i++){
+        const Lum est = define_estagio(massa[i], idade);
+        const Resultado r = calcula_estrela(mt, massa[i], est);
+        sistema.emplace_back(_nome, monta_tipo(classe[i], est, r.temp), massa[i], r.raio, static_cast<int>(r.temp), r.lumi);
     }
 }
 
@@ -456,14 +513,14 @@ double monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2){
     return dist_entre_sub;
 }
 
-//Classifica as estrelas de acordo com suas massas.
+//Classifica as estrelas de acordo com suas luminosidades.
 void classifica_binarios(Estrela &estrela_1, Estrela &estrela_2){
     std::string estrela_nome_1 = estrela_1.get_nome();
     std::string estrela_nome_2 = estrela_2.get_nome();
     estrela_nome_2.push_back(' ');
     estrela_nome_1.push_back(' ');
 
-    if(estrela_1.get_massa() > estrela_2.get_massa()){
+    if(estrela_1.get_luminosidade() > estrela_2.get_luminosidade()){
         estrela_nome_1.push_back('A');
         estrela_nome_2.push_back('B');
 
@@ -495,11 +552,11 @@ void classifica_trinarios(std::vector<Estrela> &sistema, No * raiz){
     
     raiz->nome = "ABC";
 
-    if(sistema[0].get_massa() > sistema[1].get_massa() && sistema[0].get_massa() > sistema[2].get_massa()){
+    if(sistema[0].get_luminosidade() > sistema[1].get_luminosidade() && sistema[0].get_luminosidade() > sistema[2].get_luminosidade()){
         nome_0.push_back('A');
         sistema[0].set_nome(nome_0);
 
-        if(sistema[1].get_massa() > sistema[2].get_massa()){
+        if(sistema[1].get_luminosidade() > sistema[2].get_luminosidade()){
             nome_1.push_back('B');
             nome_2.push_back('C');
             sistema[1].set_nome(nome_1);
@@ -520,11 +577,11 @@ void classifica_trinarios(std::vector<Estrela> &sistema, No * raiz){
         return;
     }
 
-    if(sistema[1].get_massa() > sistema[0].get_massa() && sistema[1].get_massa() > sistema[2].get_massa()){
+    if(sistema[1].get_luminosidade() > sistema[0].get_luminosidade() && sistema[1].get_luminosidade() > sistema[2].get_luminosidade()){
         nome_1.push_back('A');
         sistema[1].set_nome(nome_1);
 
-        if(sistema[0].get_massa() > sistema[2].get_massa()){
+        if(sistema[0].get_luminosidade() > sistema[2].get_luminosidade()){
             nome_0.push_back('B');
             nome_2.push_back('C');
             sistema[0].set_nome(nome_0);
@@ -554,7 +611,7 @@ void classifica_trinarios(std::vector<Estrela> &sistema, No * raiz){
     nome_2.push_back('A');
     sistema[2].set_nome(nome_2);
 
-    if(sistema[1].get_massa() > sistema[0].get_massa()){
+    if(sistema[1].get_luminosidade() > sistema[0].get_luminosidade()){
         nome_1.push_back('B');
         nome_0.push_back('C');
         sistema[1].set_nome(nome_1);
@@ -585,8 +642,8 @@ void classifica_multiplas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps
 
             if(ps_list[l].utilizado)continue;
 
-            if(maior < ps_list[l].mass){
-                maior = ps_list[l].mass; 
+            if(maior < ps_list[l].lumi){
+                maior = ps_list[l].lumi; 
                 maior_id = l;
             }  
         }
@@ -650,6 +707,7 @@ void imp_estrela(Estrela &Estrela,  const std::string & bari){
     std::cout << "\n Tipo             : " << Estrela.get_tipo();
     std::cout << "\n Massa            : " << formato_cientifico(Estrela.get_massa()) << " kg";
     std::cout << "\n Raio             : " << formato_cientifico(Estrela.get_raio()) << " metros";
+    std::cout << "\n Luminosidade     : " << formato_cientifico(Estrela.get_luminosidade()) << " watts";
     std::cout << "\n Temperatura      : " << Estrela.get_temperatura() << " graus celsius";
 
     std::cout << "\n\n\033[32mPossui a seguinte orbita:\033[0m\n";
@@ -703,7 +761,7 @@ void imprime_sistema(std::vector<Estrela> &list, No * sub){
         imprime_sistema(list, sub->sub_menor.get());
         
     }else if(star_maior >= 0 && sub->sub_menor != nullptr){
-        std::cout << "\ncomposto por uma estrela e um subsistema:";
+        std::cout << "\nComposto por uma estrela e um subsistema:";
         
         imp_estrela(list[star_maior], sub->nome);
 

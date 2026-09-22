@@ -55,7 +55,7 @@ void No::get_estrelas_id(int &major_id, int &menor_id)const{
 }
 
 //Pseudo_no construtor.
-Pseudo_no::Pseudo_no(std::unique_ptr<No> &original, const double massa){
+Pseudo_no::Pseudo_no(std::unique_ptr<No> &original, const double luz){
     this->no_original = original.get();
-    this->mass = massa;
+    this->lumi = luz;
 }

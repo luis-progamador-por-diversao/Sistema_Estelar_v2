@@ -6,16 +6,14 @@ struct Orbita{
     double apoastro = 0.0;
     double periastro = 0.0;
     double excentricidade = 0.0;
-
-    Orbita();
-    Orbita(const double &apo_ou_peri, const double &excentri, const bool calcular_periastro);
+    double semieixo_maior = 0.0;
 };
 
 Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool calcular_periastro);
 
 class Estrela{
 public:
-    Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp);
+    Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp , const double &lumi);
     
     ~Estrela();
 
@@ -26,6 +24,7 @@ public:
     std::string get_tipo()const;
     Orbita get_orbita()const;
     double get_massa()const;
+    double get_luminosidade()const;
     double get_raio()const;
     int get_temperatura()const;
     
@@ -33,6 +32,7 @@ public:
 private:
     
     void define_massa(double m);
+    void define_luminosidade(double l);
     void define_raio(double r);
     
     std::string m_nome = "";
@@ -40,6 +40,7 @@ private:
     Orbita orbt;
     double m_raio_m = 0.0;
     double m_massa_Kg = 0.0;
+    double m_luminosidade = 0.0;
     int m_temperatura = 0;
 };
 

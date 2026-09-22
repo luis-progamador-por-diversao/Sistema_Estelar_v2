@@ -34,10 +34,10 @@ private:
 //Auxiliar, e com base nele que o código consegue classificar o sistema.
 struct Pseudo_no{
     No * no_original = nullptr;
-    double mass;
+    double lumi;
     bool utilizado = false;
 
-    Pseudo_no(std::unique_ptr<No> &original, const double massa);
+    Pseudo_no(std::unique_ptr<No> &original, const double luz);
 };
 
 

@@ -1,21 +1,6 @@
 #include "objetos_celestes.hpp"
 //||\n\033[0m?
 
-Orbita::Orbita(){}
-Orbita::Orbita(const double &apo_ou_peri,const double &excentri,const bool calcular_periastro){
-    
-    this->excentricidade = excentri;
-
-    if(calcular_periastro){
-        this->periastro = apo_ou_peri * ((1 - excentri) / (1 + excentri));
-        this->apoastro = apo_ou_peri;
-        return;
-    }
-
-    this->apoastro = apo_ou_peri * ((1 + excentri) / (1 - excentri));
-    this->periastro = apo_ou_peri;
-}
-
 Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool calcula_periastro){
     Orbita orbita;
 
@@ -36,10 +21,11 @@ Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool 
 }
 
 
-Estrela::Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp){
+Estrela::Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp, const double &lumi){
     this->m_nome = Nome;
     this->m_tipo = tip;
     this->define_massa(Massa);
+    this->define_luminosidade(lumi);
     this->define_raio(raio);
     this->m_temperatura = Temp;
 }
@@ -66,6 +52,9 @@ Orbita Estrela::get_orbita()const{
 double Estrela::get_massa()const{
     return this->m_massa_Kg;
 }
+double Estrela::get_luminosidade()const{
+    return this->m_luminosidade;
+}
 double Estrela::get_raio()const{
     return this->m_raio_m;
 }
@@ -77,6 +66,9 @@ int Estrela::get_temperatura()const{
 void Estrela::define_massa(double m){
     this->m_massa_Kg = m * 1.989e30;
 }
+void Estrela::define_luminosidade(double l){
+    this->m_luminosidade = l * 3.828e26;
+};
 void Estrela::define_raio(double r){
     this->m_raio_m = r * 6.95e8;
 }
