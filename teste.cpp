@@ -1,13 +1,4 @@
-#include <iostream>
-#include <algorithm>
-#include <random>
-#include <vector>
-#include <stdlib.h>
-#include <iomanip>
-#include <sstream>
-#include <cmath>
-#include <array>
-#include <string>
+#include <bits/stdc++.h>
 #include "sistema_arvore.hpp"
 //||\n\033[0m?
    
@@ -147,15 +138,13 @@ std::string monta_tipo(int idx_classe, Lum est, double T){
 }
 
 } // namespace
-
 void random_estrelas(std::mt19937 &mt, std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size);
-
-//void random_estrelas(std::mt19937 &mt,std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size);
 unsigned int random_quanti(std::mt19937 & mt);
 
 //Gera proceduralmente as orbitas e hierarquia do sistema.
 double random_excentri(std::mt19937 &mt);
 double random_dist(std::mt19937 &mt, double menor_dist_pos, double maior_dist_pos);
+double limite_Mardling_Aarseth(const double &m_sub, const double &m_star, const double &e);
 double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2);
 double monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela);
 double monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2);
@@ -166,14 +155,15 @@ void classifica_trinarios(std::vector<Estrela> &sistema, No * raiz);
 void classifica_multiplas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps_list);
 
 //Revela o sistema no terminal.
-std::string formato_cientifico(double valor);//converte números de notação centifica para string.
-void imprime_orbita(const Orbita &orbit, const std::string & bari);
-void imp_estrela(Estrela &Estrela,  const std::string & bari);
+static std::string periodo_orbital(const Orbita &o1, const Orbita &o2, const double &m1, const double &m2);
+static std::string formato_cientifico(double valor);//converte números de notação centifica para string.
+static void imprime_orbita(const Orbita &orbit, const std::string & bari);
+static void imp_estrela(Estrela &Estrela,  const std::string & bari);
 void imprime_sistema(std::vector<Estrela> &list, No * sub);
 
 
 int main(){
-    std::vector<Estrela> sistema_estelar;
+    std::vector<Estrela> sistema;
     
     int seed = 0;
     
@@ -204,11 +194,11 @@ int main(){
     std::cout << std::endl << "Seed = " << seed;
     std::mt19937 mt(seed);
     
-    const unsigned int quanti = 3;//random_quanti(mt);
-    sistema_estelar.reserve(quanti);  
+    const unsigned int quanti = random_quanti(mt);
+    sistema.reserve(quanti);  
     std::string nome_geral = random_nome(mt);
 
-    random_estrelas(mt, nome_geral, sistema_estelar, quanti);
+    random_estrelas(mt, nome_geral, sistema, quanti);
    
     switch(quanti){
         case 0:
@@ -219,44 +209,48 @@ int main(){
             std::cout << "\n\n=============================================================================\n";
             std::cout << "\n                     Sistema " << nome_geral ;
             std::cout << "\n\n=============================================================================\n";
-            std::cout << "\n     Estrela  " << sistema_estelar[0].get_nome() << ":\n";
-            std::cout << "\n Tipo             : " << sistema_estelar[0].get_tipo();
-            std::cout << "\n Massa            : " << formato_cientifico(sistema_estelar[0].get_massa()) << " kg";
-            std::cout << "\n Raio             : " << formato_cientifico(sistema_estelar[0].get_raio()) << " metros";
-            std::cout << "\n Luminosidade     : " << formato_cientifico(sistema_estelar[0].get_luminosidade()) << " watts";
-            std::cout << "\n Temperatura      : " << sistema_estelar[0].get_temperatura() << " graus celsius";
+            std::cout << "\n     Estrela  " << sistema[0].get_nome() << ":\n";
+            std::cout << "\n Tipo             : " << sistema[0].get_tipo();
+            std::cout << "\n Massa            : " << formato_cientifico(sistema[0].get_massa()) << " kg";
+            std::cout << "\n Raio             : " << formato_cientifico(sistema[0].get_raio()) << " metros";
+            std::cout << "\n Luminosidade     : " << formato_cientifico(sistema[0].get_luminosidade()) << " watts";
+            std::cout << "\n Temperatura      : " << sistema[0].get_temperatura() << " graus celsius";
             
             break;
     
         case 2:{
-            double dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);                                                                        
+            double dist = monta_orbitas(mt, sistema[0], sistema[1]);                                                                        
             
-            classifica_binarios(sistema_estelar[0], sistema_estelar[1]);
+            classifica_binarios(sistema[0], sistema[1]);
            
             std::cout << "\nDistancia usada nos calculos: " << formato_cientifico(dist);
             std::cout << "\n\n=============================================================================\n";
             std::cout << "\n                   Sistema binario " << nome_geral ;
+            std::cout << "\n\n=============================================================================";
+            std::cout << "\n\nPeriodo orbital do sistema: " 
+            << periodo_orbital(sistema[0].get_orbita(), sistema[1].get_orbita(), sistema[0].get_massa(), sistema[1].get_massa());
+
+            imp_estrela(sistema[0], "");
+
             std::cout << "\n\n=============================================================================\n";
 
-            imp_estrela(sistema_estelar[0], "");
-            std::cout << "\n\n=============================================================================\n";
-            imp_estrela(sistema_estelar[1], "");
+            imp_estrela(sistema[1], "");
             
             break;
         }
         case 3:{
-            double dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);
-            auto n = std::make_unique<No>(sistema_estelar[0], 0, sistema_estelar[1], 1, dist);
+            double dist = monta_orbitas(mt, sistema[0], sistema[1]);
+            auto n = std::make_unique<No>(sistema[0], 0, sistema[1], 1, dist);
             
-            dist = monta_orbitas(mt, n.get(), sistema_estelar[2]);
-            n = std::make_unique<No>(n, sistema_estelar[2], 2, dist);
+            dist = monta_orbitas(mt, n.get(), sistema[2]);
+            n = std::make_unique<No>(n, sistema[2], 2, dist);
             
-            classifica_trinarios(sistema_estelar, n.get());
+            classifica_trinarios(sistema, n.get());
 
             std::cout << "\n\n=============================================================================\n";
             std::cout << "\n                  Sistema trinario " << nome_geral ;
     
-            imprime_sistema(sistema_estelar, n.get());
+            imprime_sistema(sistema, n.get());
             
             break;
         }
@@ -266,9 +260,9 @@ int main(){
     
             std::uniform_int_distribution<int> sorte(0,1);
             
-            double dist = monta_orbitas(mt, sistema_estelar[0], sistema_estelar[1]);
-            auto no_raiz = std::make_unique<No>(sistema_estelar[0], 0, sistema_estelar[1], 1, dist);
-            list_pseudo.emplace_back(no_raiz, std::max(sistema_estelar[0].get_massa(), sistema_estelar[1].get_massa()));
+            double dist = monta_orbitas(mt, sistema[0], sistema[1]);
+            auto no_raiz = std::make_unique<No>(sistema[0], 0, sistema[1], 1, dist);
+            list_pseudo.emplace_back(no_raiz, std::max(sistema[0].get_luminosidade(), sistema[1].get_luminosidade()));
     
             int i = 2, par_conj = 0;
     
@@ -279,9 +273,9 @@ int main(){
                     int id1 = i;
                     int id2 = i+1;
 
-                    dist = monta_orbitas(mt, sistema_estelar[id1], sistema_estelar[id2]);
-                    auto p = std::make_unique<No>(sistema_estelar[id1], id1, sistema_estelar[id2], id2, dist);
-                    list_pseudo.emplace_back(p, std::max(sistema_estelar[id1].get_luminosidade(), sistema_estelar[id2].get_luminosidade()));
+                    dist = monta_orbitas(mt, sistema[id1], sistema[id2]);
+                    auto p = std::make_unique<No>(sistema[id1], id1, sistema[id2], id2, dist);
+                    list_pseudo.emplace_back(p, std::max(sistema[id1].get_luminosidade(), sistema[id2].get_luminosidade()));
     
                     dist = monta_orbitas(mt, no_raiz.get(), p.get());
                     no_raiz = std::make_unique<No>(no_raiz, p, dist);
@@ -291,10 +285,10 @@ int main(){
     
                     i += 2;
                 }else{
-                    dist = monta_orbitas(mt, no_raiz.get(), sistema_estelar[i]);
-                    no_raiz = std::make_unique<No>(no_raiz, sistema_estelar[i], i, dist);
+                    dist = monta_orbitas(mt, no_raiz.get(), sistema[i]);
+                    no_raiz = std::make_unique<No>(no_raiz, sistema[i], i, dist);
     
-                    list_pseudo.emplace_back(no_raiz, sistema_estelar[i].get_luminosidade());
+                    list_pseudo.emplace_back(no_raiz, sistema[i].get_luminosidade());
     
                     if(no_raiz->sub_maior != nullptr){
                         no_raiz->sub_maior->volta = no_raiz.get();
@@ -307,13 +301,13 @@ int main(){
                 }
             }
     
-            classifica_multiplas(sistema_estelar, list_pseudo);
+            classifica_multiplas(sistema, list_pseudo);
             list_pseudo.clear();
     
             std::cout << "\n\n=============================================================================\n";
             std::cout << "\n         Sistema multiplo de "<< quanti << " estrelas " << nome_geral ;
 
-            imprime_sistema(sistema_estelar, no_raiz.get());
+            imprime_sistema(sistema, no_raiz.get());
             break;
         }
         default:
@@ -323,7 +317,7 @@ int main(){
     }
     
     std::cout << "\n\n=============================================================================\n";
-    sistema_estelar.clear();
+    sistema.clear();
 
     std::cout << "\n\n\033[32mPrograma finalizado\033[0m";
     return 0;
@@ -381,6 +375,7 @@ std::string random_nome(std::mt19937 &mt){
     Nome.pop_back();
     return Nome;
 }
+
 void random_estrelas(std::mt19937 &mt, std::string _nome, std::vector<Estrela> &sistema, const unsigned int &star_size){
     if(star_size == 0) return;
     std::discrete_distribution<int> sorteia_classe(PESOS.begin(), PESOS.end());
@@ -415,25 +410,35 @@ double random_excentri(std::mt19937 &mt){
     double n = static_cast<double>(numeros(mt));
     return n / 100.0;
 }
+
 double random_dist(std::mt19937 &mt, double menor_dist_pos, double maior_dist_pos){
     std::uniform_real_distribution<double> dist(menor_dist_pos, maior_dist_pos);
     return dist(mt);
 }
+#include <cmath>
+
+double limite_Mardling_Aarseth(const double &m_sub, const double &m_star, const double &e){
+    const double m = m_star / m_sub;
+    const double termo_superior = (1.0 + m) * (1.0 + e);
+    const double base = termo_superior / std::sqrt(1.0 - e);
+    
+    return 2.8 * std::pow(base, 0.4);
+}
+
 double monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela){
     
     if(sub_conj == nullptr)return 0.1;
 
     double raio_de_Hill = sub_conj->membro_dist * 2.4;
     double excent = random_excentri(mt);
-    
+   
     double m_subi = sub_conj->massa_sub;
     double m_star = estrela.get_massa();
     
-    double distancia = raio_de_Hill / ((1.0 - excent) * std::cbrt((m_subi /(3.0 * m_star))));
+    double distancia = raio_de_Hill / ((1.0 - excent)* std::cbrt((m_subi/(3.0 * m_star))));
 
-    if(m_star < m_subi * 0.3){// evita que uma estrela menos massiva passe entre o par binario
-        distancia = random_dist(mt, distancia * 2.0, distancia * 15.0);
-
+    if(m_star < m_subi * 0.3){
+        distancia = random_dist(mt, distancia * 2, distancia * 15);
     }
 
     if(m_subi > m_star){
@@ -635,7 +640,7 @@ void classifica_multiplas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps
     
     for(int i = 0; i < list_size; i++){
         double maior = 0.0;
-        unsigned int maior_id = 0; 
+        int maior_id = 0; 
         int major = -1, menor = -1;
 
         for(int l = 0; l < list_size; l++){
@@ -683,7 +688,35 @@ void classifica_multiplas(std::vector<Estrela> &list, std::vector<Pseudo_no> &ps
 }
 
 //funções responsaveis pela impressão.
-std::string formato_cientifico(double valor){
+
+//terceira lei de Kepler Modificada por Newton.
+static std::string periodo_orbital(const Orbita &o1, const Orbita &o2, const double &m1, const double &m2){
+
+    double a3 = o1.semieixo_maior + o2.semieixo_maior;
+    double t_segundos = 2 * 3.14 * std::sqrt((a3 * a3 * a3)/(6.67e-11 * (m1 + m2)));
+    double t_dias = t_segundos / 86400.0;
+
+    std::stringstream t("aproximadamente ");
+    
+    if(t_dias < 30.0){
+        t << std::fixed << std::setprecision(2) << t_dias << " dias";
+        return t.str();
+    }
+    if(t_dias < 364.0){
+        double t_mes = t_dias / 30;
+
+        t << std::fixed << std::setprecision(2) << t_mes << " meses";
+        
+        return t.str();
+    }
+    
+    double t_anos = t_dias / 364.0;
+
+    t << std::fixed << std::setprecision(2) << t_anos << " anos";
+
+    return t.str();
+}
+static std::string formato_cientifico(double valor){
 
     if(valor == 0)return "0";
 
@@ -696,15 +729,16 @@ std::string formato_cientifico(double valor){
 
     return ss.str();
 }
-void imprime_orbita(const Orbita &orbit, const std::string & bari){
+static void imprime_orbita(const Orbita &orbit, const std::string & bari){
+    std::cout << "\n semieixo_maior   : " << formato_cientifico(orbit.semieixo_maior) << " metros";
     std::cout << "\n apoastro         : " << formato_cientifico(orbit.apoastro) << " metros de distancia do baricentro " << bari;
     std::cout << "\n periastro        : " << formato_cientifico(orbit.periastro) << " metros de distancia do baricentro " << bari;
     std::cout << "\n excentricidade   : " << orbit.excentricidade;
 }
-void imp_estrela(Estrela &Estrela,  const std::string & bari){
+static void imp_estrela(Estrela &Estrela,  const std::string & bari){
 
     std::cout << "\n\n     Estrela  " << Estrela.get_nome() << ":";
-    std::cout << "\n Tipo             : " << Estrela.get_tipo();
+    std::cout << "\n Classe           : " << Estrela.get_tipo();
     std::cout << "\n Massa            : " << formato_cientifico(Estrela.get_massa()) << " kg";
     std::cout << "\n Raio             : " << formato_cientifico(Estrela.get_raio()) << " metros";
     std::cout << "\n Luminosidade     : " << formato_cientifico(Estrela.get_luminosidade()) << " watts";
@@ -726,6 +760,10 @@ void imprime_sistema(std::vector<Estrela> &list, No * sub){
 
     if(star_maior >= 0 && star_menor >= 0){
         std::cout << "\nComposto por duas estrelas:";
+
+        std::cout << "\n\nPeriodo orbital dos menbros: ";
+        std::cout << periodo_orbital(list[star_menor].get_orbita(), list[star_maior].get_orbita(), list[star_menor].get_massa(), list[star_maior].get_massa());
+
         std::cout << "\n\nEstrela mais massiva:";
         imp_estrela(list[star_maior], sub->nome);
 
@@ -736,6 +774,8 @@ void imprime_sistema(std::vector<Estrela> &list, No * sub){
     }
     if(star_menor >= 0 && sub->sub_maior != nullptr){
         std::cout << "\nComposto por uma estrela e um subsistema:";
+        std::cout << "\n\nPeriodo orbital dos menbros: ";
+        std::cout << periodo_orbital(list[star_menor].get_orbita(), sub->sub_maior->orbt, list[star_menor].get_massa(), sub->sub_maior->massa_sub);
         
         imp_estrela(list[star_menor], sub->nome);
 
@@ -748,6 +788,9 @@ void imprime_sistema(std::vector<Estrela> &list, No * sub){
 
     }else if(sub->sub_maior != nullptr && sub->sub_menor != nullptr){
         std::cout << "\nComposto por dois subsistemas rivais:";
+
+        std::cout << "\n\nPeriodo orbital dos menbros: ";
+        std::cout << periodo_orbital(sub->sub_maior->orbt, sub->sub_menor->orbt, sub->sub_maior->massa_sub, sub->sub_menor->massa_sub);
 
         std::cout << "\n\nSubsistema " << sub->sub_maior->nome;
         std::cout << "\n\033[32mPossui a seguinte orbita:\033[0m\n";
@@ -763,6 +806,9 @@ void imprime_sistema(std::vector<Estrela> &list, No * sub){
     }else if(star_maior >= 0 && sub->sub_menor != nullptr){
         std::cout << "\nComposto por uma estrela e um subsistema:";
         
+        std::cout << "\n\nPeriodo orbital dos menbros: ";
+        std::cout << periodo_orbital(list[star_maior].get_orbita(), sub->sub_menor->orbt, list[star_maior].get_massa(), sub->sub_menor->massa_sub);
+
         imp_estrela(list[star_maior], sub->nome);
 
         std::cout << ".\n\nSubsistema " << sub->sub_menor->nome;

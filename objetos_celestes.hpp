@@ -9,7 +9,7 @@ struct Orbita{
     double semieixo_maior = 0.0;
 };
 
-Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool calcular_periastro);
+Orbita calcula_orbita(const double &apo_ou_peri, const double &exc, bool calcula_periastro);
 
 class Estrela{
 public:

@@ -1,8 +1,8 @@
 #ifndef SISTEMA_EM_ARVORE_HPP
 #define SISTEMA_EM_ARVORE_HPP
 
-//g++ *.cpp -o main.exe
-//.\main.exe
+// g++ *.cpp -o main.exe
+// .\main.exe
 
 #include <memory>
 #include "objetos_celestes.hpp"

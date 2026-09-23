@@ -1,25 +1,26 @@
 #include "objetos_celestes.hpp"
 //||\n\033[0m?
 
-Orbita calcula_orbita(double apoastro_ou_periastro, double excentricidade, bool calcula_periastro){
-    Orbita orbita;
+Orbita calcula_orbita(const double &apo_ou_peri, const double &exc, bool calcula_periastro){
+    Orbita o;
 
     if(calcula_periastro){
         //calcula o periastro
-        orbita.periastro = apoastro_ou_periastro * ((1 - excentricidade)/(1 + excentricidade));
-        orbita.excentricidade = excentricidade;
-        orbita.apoastro = apoastro_ou_periastro;
+        o.periastro = apo_ou_peri * ((1 - exc)/(1 + exc));
+        o.excentricidade = exc;
+        o.apoastro = apo_ou_peri;
 
     }else{
         //calcula o apoastro
-        orbita.apoastro = apoastro_ou_periastro * ((1 + excentricidade)/(1 - excentricidade));
-        orbita.excentricidade = excentricidade;
-        orbita.periastro = apoastro_ou_periastro;
+        o.apoastro = apo_ou_peri * ((1 + exc)/(1 - exc));
+        o.excentricidade = exc;
+        o.periastro = apo_ou_peri;
     }
 
-    return orbita;
-}
+    o.semieixo_maior = (o.apoastro + o.periastro)/2;
 
+    return o;
+}
 
 Estrela::Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp, const double &lumi){
     this->m_nome = Nome;
@@ -76,29 +77,29 @@ void Estrela::define_raio(double r){
 
 
 /*
-double Cauculo_Massivo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior){
+double Cauculo_Massivo_da_esfera_de_Hill(double distancia, double exc, double massa_menor, double Massa_maior){
     //testa se as variaveis fazem sentido
-    if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (excentricidade <= 0.0f && excentricidade > 0.9f))){
+    if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (exc <= 0.0f && exc > 0.9f))){
         throw std::domain_error("Erro: valores informados nao fazem sentido");
     }
 
-    double raio_de_Hill = distancia * ((1 - excentricidade) * (std::cbrt((massa_menor/(3 * (Massa_maior + massa_menor))))));
+    double raio_de_Hill = distancia * ((1 - exc) * (std::cbrt((massa_menor/(3 * (Massa_maior + massa_menor))))));
 
     return raio_de_Hill;
 }
-double Cauculo_da_esfera_de_Hill(double distancia, double excentricidade, double massa_menor, double Massa_maior){
+double Cauculo_da_esfera_de_Hill(double distancia, double exc, double massa_menor, double Massa_maior){
     //testa se as variaveis fazem sentido
-    if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (excentricidade <= 0.0f && excentricidade > 0.9f))){
+    if((distancia <= 0.0 || massa_menor <= 0.0) || (Massa_maior <= 0.0 || (exc <= 0.0f && exc > 0.9f))){
         throw std::domain_error("Erro: valores informados nao fazem sentido");
     }
 
-    if(excentricidade < 0.20){
+    if(exc < 0.20){
         double raio_de_Hill = distancia * (std::cbrt((massa_menor/(3 * Massa_maior))));
     
         return raio_de_Hill;
     }
     
-    double raio_de_Hill = distancia * ((1 - excentricidade) * (std::cbrt((massa_menor/(3 * Massa_maior)))));
+    double raio_de_Hill = distancia * ((1 - exc) * (std::cbrt((massa_menor/(3 * Massa_maior)))));
 
     return raio_de_Hill;
 }
