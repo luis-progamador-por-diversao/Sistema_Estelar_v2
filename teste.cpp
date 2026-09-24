@@ -21,7 +21,7 @@ const std::array<FaixaMassa, 7> FAIXAS = {{
     {2.10, 16.0, 2.35},  // B
     {16.0, 50.0, 2.35}   // O
 }};
-// pesos de sorteio da classe (ajuste à vontade; o real é bem mais extremo)
+// pesos de sorteio da classe 
 const std::array<double, 7> PESOS = {{60.0, 15.0, 10.0, 7.0, 4.0, 3.0, 1.0}};
 
 enum class Lum { SeqPrincipal, Subgigante, Gigante, Supergigante, Hipergigante };
@@ -696,7 +696,8 @@ static std::string periodo_orbital(const Orbita &o1, const Orbita &o2, const dou
     double t_segundos = 2 * 3.14 * std::sqrt((a3 * a3 * a3)/(6.67e-11 * (m1 + m2)));
     double t_dias = t_segundos / 86400.0;
 
-    std::stringstream t("aproximadamente ");
+    std::stringstream t;
+    t << "aproximadamente ";
     
     if(t_dias < 30.0){
         t << std::fixed << std::setprecision(2) << t_dias << " dias";
