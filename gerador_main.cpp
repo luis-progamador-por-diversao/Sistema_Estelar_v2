@@ -143,7 +143,7 @@ unsigned int random_quanti(std::mt19937 & mt);
 
 //Gera proceduralmente as orbitas e hierarquia do sistema.
 double random_excentri(std::mt19937 &mt);
-double Mardling_Aarseth(const double &m_sub, const double &m_star, const double &e);
+inline double Mardling_Aarseth(const double &m_sub, const double &m_star, const double &e);
 double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2);
 double monta_orbitas(std::mt19937 &mt, No * sub_conj, Estrela &estrela);
 double monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2);
@@ -414,7 +414,7 @@ double random_excentri(std::mt19937 &mt){
     return n / 100.0;
 }
 
-double Mardling_Aarseth(const double &m_sub, const double &m_star, const double &e){
+inline double Mardling_Aarseth(const double &m_sub, const double &m_star, const double &e){
     const double m = m_star / m_sub;
     const double termo_superior = (1.0 + m) * (1.0 + e);
     const double base = termo_superior / std::sqrt(1.0 - e);
@@ -427,9 +427,9 @@ double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){
     //double menor_valor = estrela1.get_raio() + estrela2.get_raio();
 
     double menor_valor = 3 * (estrela1.get_raio() + estrela2.get_raio()); 
-    double maior_valor = menor_valor * 50.0;
+    double maior_valor = menor_valor * 90.0;
 
-    double apo_maior = uniforme(mt, menor_valor, maior_valor);
+    double apo_maior = log_uniforme(mt, menor_valor, maior_valor);
     double exc = random_excentri(mt);
 
     double m1 = estrela1.get_massa();
@@ -513,7 +513,7 @@ double monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2){
     double menor_dist = 3 * (sub1->membro_dist + sub2->membro_dist);
     double maior_dist = menor_dist * 10.0;
 
-    double dist_entre_sub = uniforme(mt, menor_dist, maior_dist);
+    double dist_entre_sub = log_uniforme(mt, menor_dist, maior_dist);
     double exc = random_excentri(mt);
     
     double m1 = sub1->massa_sub;

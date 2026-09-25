@@ -47,7 +47,7 @@ private:
 };
 
 /*
-// em planejamento....
+// O desenvolvimento dos planetas será retomado quando a geração de estrelas estiver funcionando.
 class Planeta{
 public:
     Planeta(double m, double r, char c_t, bool roc);
