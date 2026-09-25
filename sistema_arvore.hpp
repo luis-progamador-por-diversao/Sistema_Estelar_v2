@@ -3,6 +3,8 @@
 
 // g++ *.cpp -o main.exe
 // .\main.exe
+//-1035021303 <- seed boa para testes.
+//-725612034 <- seed boa para testes.
 
 #include <memory>
 #include "objetos_celestes.hpp"

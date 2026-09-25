@@ -1,26 +1,30 @@
 #include "objetos_celestes.hpp"
 //||\n\033[0m?
 
-Orbita calcula_orbita(const double &apo_ou_peri, const double &exc, bool calcula_periastro){
-    Orbita o;
+Orbita::Orbita(const double &apo_ou_peri, const double &exc, bool calcula_periastro){
 
     if(calcula_periastro){
         //calcula o periastro
-        o.periastro = apo_ou_peri * ((1 - exc)/(1 + exc));
-        o.excentricidade = exc;
-        o.apoastro = apo_ou_peri;
+        this->periastro = apo_ou_peri * ((1 - exc)/(1 + exc));
+        this->excentricidade = exc;
+        this->apoastro = apo_ou_peri;
 
     }else{
         //calcula o apoastro
-        o.apoastro = apo_ou_peri * ((1 + exc)/(1 - exc));
-        o.excentricidade = exc;
-        o.periastro = apo_ou_peri;
+        this->apoastro = apo_ou_peri * ((1 + exc)/(1 - exc));
+        this->excentricidade = exc;
+        this->periastro = apo_ou_peri;
     }
 
-    o.semieixo_maior = (o.apoastro + o.periastro)/2;
-
-    return o;
+    this->semieixo_maior = (this->apoastro + this->periastro)/2;
+}/*
+Orbita::Orbita(const double &peri, const double &exc, const double &eixo_maior){
+    this->periastro = peri;
+    this->excentricidade = exc;
+    this->
 }
+
+*/
 
 Estrela::Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp, const double &lumi){
     this->m_nome = Nome;
