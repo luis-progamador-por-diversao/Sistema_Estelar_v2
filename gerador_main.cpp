@@ -426,11 +426,13 @@ double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){
 
     //double menor_valor = estrela1.get_raio() + estrela2.get_raio();
 
-    double menor_valor = 3 * (estrela1.get_raio() + estrela2.get_raio()); 
-    double maior_valor = menor_valor * 90.0;
-
-    double apo_maior = log_uniforme(mt, menor_valor, maior_valor);
+    double peri_minimo = 3 * (estrela1.get_raio() + estrela2.get_raio()); 
     double exc = random_excentri(mt);
+    
+    double apo_minimo = peri_minimo * (1.0 + exc) / (1.0 - exc);
+    double apo_maximo = apo_minimo * 90;
+
+    double apo_maior = log_uniforme(mt, apo_minimo, apo_maximo);
 
     double m1 = estrela1.get_massa();
     double m2 = estrela2.get_massa();
@@ -457,7 +459,6 @@ double monta_orbitas(std::mt19937 &mt, Estrela &estrela1, Estrela &estrela2){
         return o1.semieixo_maior + o2.semieixo_maior;
     }
 }
-
 double monta_orbitas(std::mt19937 &mt, No * sub, Estrela &estrela){
     
     if(sub == nullptr){
@@ -467,20 +468,14 @@ double monta_orbitas(std::mt19937 &mt, No * sub, Estrela &estrela){
 
     double excent = random_excentri(mt);
     double peri_minimo = Mardling_Aarseth(sub->massa_sub, estrela.get_massa(), excent);
+    
+    double apo_minimo = peri_minimo * (1.0 + excent) / (1.0 - excent);
 
-    double distancia = sub->membro_dist * log_uniforme(mt, peri_minimo, peri_minimo * 10);
+    double distancia = sub->membro_dist * log_uniforme(mt, peri_minimo, apo_minimo);
    
     double m_subi = sub->massa_sub;
     double m_star = estrela.get_massa();
     
-    /*
-    double raio_de_Hill = sub->massa_sub * 2.4;
-    double excent = random_excentri(mt);
-    double distancia = raio_de_Hill / ((1.0 - excent)* std::cbrt((m_subi/(3.0 * m_star))));
-    if(m_star < m_subi * 0.3){
-        distancia = uniforme(mt, distancia * 2, distancia * 15);
-    }
-    */
     if(m_subi > m_star){
         double apoastro_1 = distancia * (m_subi /(m_star + m_subi));
         double apoastro_2 = distancia - apoastro_1;
@@ -502,19 +497,26 @@ double monta_orbitas(std::mt19937 &mt, No * sub, Estrela &estrela){
 
     return distancia;
 }
-
 double monta_orbitas(std::mt19937 &mt, No * sub1, No * sub2){
 
     if(sub1 == nullptr || sub2 == nullptr){
-        std::cout << "\nErro: A função monta_orbitas(No + No) falhou po ponteiro nulo";
+        std::cout << "\nErro: A função monta_orbitas(No + No) falhou por ponteiro nulo";
         return 0.1;
     }
 
-    double menor_dist = 3 * (sub1->membro_dist + sub2->membro_dist);
-    double maior_dist = menor_dist * 10.0;
-
-    double dist_entre_sub = log_uniforme(mt, menor_dist, maior_dist);
     double exc = random_excentri(mt);
+
+    double a_interno = std::max(sub1->membro_dist, sub2->membro_dist);
+
+    double fator = Mardling_Aarseth(std::min(sub1->massa_sub, sub2->massa_sub),
+                                    std::max(sub1->massa_sub, sub2->massa_sub), exc);
+
+    double peri_minimo = a_interno * fator;
+
+    double apo_minimo = peri_minimo * (1.0 + exc) / (1.0 - exc);
+    double apo_maximo = apo_minimo * 10.0;
+
+    double dist_entre_sub = log_uniforme(mt, apo_minimo, apo_maximo);
     
     double m1 = sub1->massa_sub;
     double m2 = sub2->massa_sub;

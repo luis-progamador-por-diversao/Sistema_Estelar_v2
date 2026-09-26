@@ -17,14 +17,8 @@ Orbita::Orbita(const double &apo_ou_peri, const double &exc, bool calcula_perias
     }
 
     this->semieixo_maior = (this->apoastro + this->periastro)/2;
-}/*
-Orbita::Orbita(const double &peri, const double &exc, const double &eixo_maior){
-    this->periastro = peri;
-    this->excentricidade = exc;
-    this->
 }
 
-*/
 
 Estrela::Estrela(const std::string &Nome,const std::string &tip,const double &Massa,const double &raio,const int &Temp, const double &lumi){
     this->m_nome = Nome;
