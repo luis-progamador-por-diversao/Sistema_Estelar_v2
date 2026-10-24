@@ -2,7 +2,7 @@
 #define SISTEMA_EM_ARVORE_HPP
 
 // g++ *.cpp -o main.exe
-// .\main.exe
+// .\output/Gerador.exe
 // 1847088134 <- seed especial, primeiro 7 estrelas.
 //-1035021303 <- seed boa para testes.
 //-725612034 <- seed boa para testes.

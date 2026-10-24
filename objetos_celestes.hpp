@@ -10,7 +10,6 @@ struct Orbita{
 
     Orbita() = default;
     Orbita(const double &apo_ou_peri, const double &exc, const bool calcula_periastro);
-    //Orbita(const double &apo, const double &exc, const double &eixo_maior);
 };
 
 class Estrela{

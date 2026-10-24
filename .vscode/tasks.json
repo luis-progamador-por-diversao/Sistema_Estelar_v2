@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Compilar Gerador",
+            "command": "C:/msys64/ucrt64/bin/g++",
+            "args": [
+                "${workspaceFolder}/*.cpp",
+                "-o", "${workspaceFolder}/output/Gerador.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "compiler: C:/msys64/ucrt64/bin/g++"
+        }
+    ]
+}
