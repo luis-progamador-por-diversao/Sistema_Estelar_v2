@@ -4,9 +4,15 @@
         {
             "type": "cppbuild",
             "label": "Compilar Gerador",
-            "command": "C:/msys64/ucrt64/bin/g++",
+            "command": "C:/msys64/ucrt64/bin/g++.exe",
             "args": [
-                "${workspaceFolder}/*.cpp",
+                "-std=c++17",
+                "-Wall",
+                "-Wextra",
+                "-Wpedantic",
+                "-fdiagnostics-color=always",
+                "-I${workspaceFolder}/include",
+                "${workspaceFolder}/src/*.cpp",
                 "-o", "${workspaceFolder}/output/Gerador.exe"
             ],
             "options": {
@@ -19,7 +25,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "compiler: C:/msys64/ucrt64/bin/g++"
+            "detail": "Compilador: C:/msys64/ucrt64/bin/g++.exe (MSYS2 GCC 15.2.0, C++17)"
         }
     ]
 }
