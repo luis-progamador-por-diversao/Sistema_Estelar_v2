@@ -15,16 +15,17 @@ public:
 
     // Construtor a partir de grandezas solares e temperatura (compatibilidade com gerador de classes)
     Estrela(std::string_view nome, std::string_view tipo,
-            double massa_solar, double raio_solar, int temperatura_k, double luminosidade_solar,
-            int id = -1);
+            double m, double r, int tem, double l,
+            char t);
 
     // Construtor integrado com as estruturas do módulo FisicaEstelar
-    Estrela(int id, std::string_view nome, std::string_view tipo,
-            double massa_solar, const FisicaEstelar::PropriedadesFisicasEstrela &props,
-            FisicaEstelar::EstagioEvolutivo estagio = FisicaEstelar::EstagioEvolutivo::SequenciaPrincipal);
+    Estrela(std::string_view nome, std::string_view tipo,
+            double m,char t, const FisicaEstelar::PropriedadesFisicasEstrela &props,
+            FisicaEstelar::EstagioEvolutivo estagio = FisicaEstelar::EstagioEvolutivo::SequenciaPrincipal 
+            );
 
     // Getters de Identificação e Classificação
-    [[nodiscard]] int get_id() const noexcept;
+    [[nodiscard]] char get_tipo_spectral() const noexcept;
     [[nodiscard]] const std::string& get_nome() const noexcept;
     [[nodiscard]] const std::string& get_tipo() const noexcept;
     [[nodiscard]] FisicaEstelar::EstagioEvolutivo get_estagio() const noexcept;
@@ -45,7 +46,7 @@ public:
     [[nodiscard]] double get_luminosidade_solar() const noexcept;
 
     // Métodos de Atualização de Estado (Setters)
-    void set_id(int id) noexcept;
+    void set_tipo_spectral(char novo_tipo_spectral) noexcept;
     void set_nome(std::string_view novo_nome);
     void set_tipo(std::string_view novo_tipo);
     void set_orbita(const Orbita &nova_orbita) noexcept;
@@ -60,7 +61,7 @@ public:
     void atualizar_propriedades_fisicas(double massa_solar, const FisicaEstelar::PropriedadesFisicasEstrela &props);
 
 private:
-    int m_id = -1;
+    char m_tipo_spectral = '\0';
     std::string m_nome;
     std::string m_tipo;
     Orbita m_orbita;

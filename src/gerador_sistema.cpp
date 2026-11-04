@@ -14,7 +14,7 @@ SistemaEstelar GeradorSistema::gerar(int seed) {
     const unsigned int quanti = GeradorAleatorio::sortear_quantidade_estrelas(prng);
     resultado.quantidade_estrelas = quanti;
     resultado.nome = GeradorAleatorio::gerar_nome_sistema(prng);
-    resultado.estrelas = GeradorAleatorio::gerar_lote_estrelas(prng, resultado.nome, quanti);
+    resultado.estrelas = GeradorAleatorio::gerar_lote_estrelas(prng, resultado.nome, quanti, resultado.idade);
 
     switch (quanti) {
         case 0:
@@ -22,9 +22,8 @@ SistemaEstelar GeradorSistema::gerar(int seed) {
             break;
 
         case 2: {
-            const double dist = EstabilidadeOrbital::monta_orbitas(
+            EstabilidadeOrbital::monta_orbitas_binarias(
                 prng, resultado.estrelas[0], resultado.estrelas[1]);
-            resultado.distancia_binaria = dist;
             ClassificadorWDS::classificar_binario(resultado.estrelas[0], resultado.estrelas[1]);
             break;
         }

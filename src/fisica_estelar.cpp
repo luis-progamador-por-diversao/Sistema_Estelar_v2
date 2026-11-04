@@ -123,32 +123,17 @@ char obter_letra_classe_espectral(double temperatura_k) {
     return 'M';
 }
 
-std::string_view obter_cor_ansi(char letra_classe) {
-    switch (letra_classe) {
-        case 'M': return "\033[31m";
-        case 'K': return "\033[93m";
-        case 'G': return "\033[33m";
-        case 'F': return "\033[37m";
-        case 'A': return "\033[34m";
-        case 'B': return "\033[36m";
-        default:  return "\033[95m";
-    }
-}
-
 std::string montar_descricao_tipo(int indice_classe, EstagioEvolutivo estagio, double temperatura_k) {
-    static constexpr std::string_view LETRAS = "MKGFABO";
     static constexpr std::array<std::string_view, 7> NOMES_SP = {
-        "Ana Vermelha", "Ana Laranja", "Ana Amarela",
-        "Ana Amarelo-Branca", "Ana Branca", "Estrela Azul-Branca", "Estrela Azul"
+        "Anã Vermelha", "Anã Laranja", "Anã Amarela",
+        "Anã Amarelo-Branca", "Anã Branca", "Estrela Azul-Branca", "Estrela Azul"
     };
 
     if (estagio == EstagioEvolutivo::SequenciaPrincipal) {
         if (indice_classe >= 0 && indice_classe < 7) {
             std::string res;
             res.reserve(32);
-            res += obter_cor_ansi(LETRAS[static_cast<std::size_t>(indice_classe)]);
             res += NOMES_SP[static_cast<std::size_t>(indice_classe)];
-            res += "\033[0m";
             return res;
         }
     }
@@ -165,11 +150,9 @@ std::string montar_descricao_tipo(int indice_classe, EstagioEvolutivo estagio, d
 
     std::string res;
     res.reserve(40);
-    res += obter_cor_ansi(letra);
     res += nome_estagio;
     res += " tipo ";
     res += letra;
-    res += "\033[0m";
     return res;
 }
 

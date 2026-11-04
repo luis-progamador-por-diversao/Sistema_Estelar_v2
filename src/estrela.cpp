@@ -1,29 +1,31 @@
 #include "estrela.hpp"
 
 Estrela::Estrela(std::string_view nome, std::string_view tipo,
-                 double massa_solar, double raio_solar, int temperatura_k, double luminosidade_solar,
-                 int id)
-    : m_id(id),
+                 double m, double r, int tem, double l,
+                 char t)
+    : m_tipo_spectral(t),
       m_nome(nome),
       m_tipo(tipo),
-      m_temperatura(temperatura_k) {
-    definir_massa_solar(massa_solar);
-    definir_raio_solar(raio_solar);
-    definir_luminosidade_solar(luminosidade_solar);
+      m_temperatura(tem)
+      {
+      definir_massa_solar(m);
+      definir_raio_solar(r);
+      definir_luminosidade_solar(l);
 }
 
-Estrela::Estrela(int id, std::string_view nome, std::string_view tipo,
-                 double massa_solar, const FisicaEstelar::PropriedadesFisicasEstrela &props,
+Estrela::Estrela(std::string_view nome, std::string_view tipo,
+                 double massa_solar, char t, const FisicaEstelar::PropriedadesFisicasEstrela &props,
                  FisicaEstelar::EstagioEvolutivo estagio)
-    : m_id(id),
+    : m_tipo_spectral(t),
       m_nome(nome),
       m_tipo(tipo),
-      m_estagio(estagio) {
-    atualizar_propriedades_fisicas(massa_solar, props);
-}
+      m_estagio(estagio)
+      {
+          atualizar_propriedades_fisicas(massa_solar, props);
+      }
 
-int Estrela::get_id() const noexcept {
-    return m_id;
+char Estrela::get_tipo_spectral() const noexcept{
+    return m_tipo_spectral;
 }
 
 const std::string& Estrela::get_nome() const noexcept {
@@ -74,8 +76,8 @@ double Estrela::get_luminosidade_solar() const noexcept {
     return m_luminosidade_w / Constantes::LUMINOSIDADE_SOLAR_W;
 }
 
-void Estrela::set_id(int id) noexcept {
-    m_id = id;
+void Estrela::set_tipo_spectral(char novo_tipo_spectral) noexcept {
+    m_tipo_spectral = novo_tipo_spectral;
 }
 
 void Estrela::set_nome(std::string_view novo_nome) {

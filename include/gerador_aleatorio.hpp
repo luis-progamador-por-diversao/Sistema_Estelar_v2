@@ -24,14 +24,9 @@ namespace GeradorAleatorio {
 // Gera um lote completo de estrelas aplicando a IMF, idade compartilhada e evolução astrofísica
 [[nodiscard]] std::vector<Estrela> gerar_lote_estrelas(std::mt19937 &prng,
                                                         std::string_view nome_geral,
-                                                        unsigned int quanti);
+                                                        unsigned int quanti, double & _idade);
 
 } // namespace GeradorAleatorio
-
-// Aliases para compatibilidade direta
-using GeradorAleatorio::sortear_quantidade_estrelas;
-using GeradorAleatorio::gerar_nome_sistema;
-using GeradorAleatorio::gerar_lote_estrelas;
 
 #endif // GERADOR_ALEATORIO_HPP_INCLUDED
 

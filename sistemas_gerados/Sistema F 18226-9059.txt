@@ -1,0 +1,45 @@
+=============================================================================
+
+                   Sistema binario F 18226-9059
+
+-----------------------------------------------------------------------------
+
+ Seed            : 1830585295
+ Idade           : Idade estimada: ~379.28 milhões de anos.
+ Periodo orbital : aproximadamente 5.08 dias
+
+=============================================================================
+
+
+     Estrela  F 18226-9059 B:
+ Classe           : Anã Vermelha
+ Massa            : 6.06 x 10^29 kg
+ Raio             : 2.38 x 10^8 metros
+ Luminosidade     : 5.71 x 10^24 watts
+ Temperatura      : 3448 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 8.34 x 10^9 metros
+ apoastro         : 1.07 x 10^10 metros de distancia do baricentro 
+ periastro        : 6.00 x 10^9 metros de distancia do baricentro 
+ excentricidade   : 0.28
+
+=============================================================================
+
+
+     Estrela  F 18226-9059 A:
+ Classe           : Anã Amarelo-Branca
+ Massa            : 2.68 x 10^30 kg
+ Raio             : 8.82 x 10^8 metros
+ Luminosidade     : 1.26 x 10^27 watts
+ Temperatura      : 6905 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 1.89 x 10^9 metros
+ apoastro         : 2.41 x 10^9 metros de distancia do baricentro 
+ periastro        : 1.36 x 10^9 metros de distancia do baricentro 
+ excentricidade   : 0.28
+
+=============================================================================

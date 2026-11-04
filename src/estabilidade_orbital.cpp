@@ -18,6 +18,24 @@ double sortear_excentricidade(std::mt19937 &prng) noexcept {
     return static_cast<double>(numeros(prng)) / 100.0;
 }
 
+void monta_orbitas_binarias(std::mt19937 &prng, Estrela &estrela1, Estrela &estrela2) {
+    const double peri_minimo = 3.0 * (estrela1.get_raio() + estrela2.get_raio());
+    const double exc = sortear_excentricidade(prng);
+
+    const double apo_minimo = peri_minimo * (1.0 + exc) / (1.0 - exc);
+    const double apo_maximo = apo_minimo * 90.0;
+    const double apo_maior = log_uniforme(prng, apo_minimo, apo_maximo);
+
+    const auto [apo1, apo2] = calcular_apoastros_baricentro(apo_maior, estrela1.get_massa(), estrela2.get_massa());
+
+    const Orbita o1(apo1, exc, true);
+    const Orbita o2(apo2, exc, true);
+
+    estrela1.set_orbita(o1);
+    estrela2.set_orbita(o2);
+
+}
+
 double monta_orbitas(std::mt19937 &prng, Estrela &estrela1, Estrela &estrela2) {
     const double peri_minimo = 3.0 * (estrela1.get_raio() + estrela2.get_raio());
     const double exc = sortear_excentricidade(prng);

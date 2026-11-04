@@ -11,6 +11,9 @@
 
 namespace VisualizadorSistema {
 
+// Formata a idade do sistema estelar 
+[[nodiscard]] std::string formata_idade(const double idade);
+
 // Converte valores numéricos para notação científica formatada (ex.: 1.99 x 10^30)
 [[nodiscard]] std::string formato_cientifico(double valor);
 
@@ -24,18 +27,14 @@ void imprimir_estrela(std::ostream &os, const Estrela &estrela, std::string_view
 void imprimir_sistema(std::ostream &os, const std::vector<Estrela> &lista, const SubsistemaNo *sub);
 
 // Renderiza o relatório completo formatado para 1 até 7 estrelas
-void imprimir_relatorio(std::ostream &os,
+void relatorio(std::ostream &os,
+                        const int Seed,
                         std::string_view nome_geral,
                         const std::vector<Estrela> &sistema,
                         const SubsistemaNo *no_raiz = nullptr,
-                        double distancia_binaria = 0.0);
+                        double idade = 0.0);
 
 } // namespace VisualizadorSistema
-
-// Aliases para compatibilidade direta
-using VisualizadorSistema::imprimir_sistema;
-using VisualizadorSistema::imprimir_estrela;
-using VisualizadorSistema::imprimir_orbita;
 
 #endif // VISUALIZADOR_SISTEMA_HPP_INCLUDED
 

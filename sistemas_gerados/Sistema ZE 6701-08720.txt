@@ -1,0 +1,109 @@
+=============================================================================
+
+         Sistema multiplo de 4 estrelas: ZE 6701-08720
+
+-----------------------------------------------------------------------------
+
+ Seed  : -1035021303
+ Idade : Idade estimada: ~1.83 milhões de anos.
+
+=============================================================================
+
+Subsistema ABC:
+Composto por uma estrela e um subsistema:
+
+Periodo orbital dos menbros: aproximadamente 1.55 anos
+
+     Estrela  ZE 6701-08720 A:
+ Classe           : Estrela Azul
+ Massa            : 6.62 x 10^31 kg
+ Raio             : 6.01 x 10^9 metros
+ Luminosidade     : 1.14 x 10^32 watts
+ Temperatura      : 45929 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 8.11 x 10^9 metros
+ apoastro         : 8.27 x 10^9 metros de distancia do baricentro ABC
+ periastro        : 7.94 x 10^9 metros de distancia do baricentro ABC
+ excentricidade   : 0.02.
+
+Subsistema BC
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 6.39 x 10^11 metros
+ apoastro         : 6.52 x 10^11 metros de distancia do baricentro ABC
+ periastro        : 6.26 x 10^11 metros de distancia do baricentro ABC
+ excentricidade   : 0.02
+
+=============================================================================
+
+Subsistema BC:
+Composto por uma estrela e um subsistema:
+
+Periodo orbital dos menbros: aproximadamente 1.19 meses
+
+     Estrela  ZE 6701-08720 C:
+ Classe           : Anã Vermelha
+ Massa            : 1.76 x 10^29 kg
+ Raio             : 7.85 x 10^7 metros
+ Luminosidade     : 3.34 x 10^23 watts
+ Temperatura      : 2955 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 1.90 x 10^10 metros
+ apoastro         : 3.15 x 10^10 metros de distancia do baricentro BC
+ periastro        : 6.45 x 10^9 metros de distancia do baricentro BC
+ excentricidade   : 0.66.
+
+Subsistema B
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 5.04 x 10^9 metros
+ apoastro         : 8.36 x 10^9 metros de distancia do baricentro BC
+ periastro        : 1.71 x 10^9 metros de distancia do baricentro BC
+ excentricidade   : 0.66
+
+=============================================================================
+
+Subsistema B:
+Composto por duas estrelas:
+
+Periodo orbital dos menbros: aproximadamente 2.58 dias
+
+Estrela mais massiva:
+
+     Estrela  ZE 6701-08720 Ba:
+ Classe           : Anã Vermelha
+ Massa            : 3.63 x 10^29 kg
+ Raio             : 1.50 x 10^8 metros
+ Luminosidade     : 1.76 x 10^24 watts
+ Temperatura      : 3234 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 1.74 x 10^9 metros
+ apoastro         : 1.86 x 10^9 metros de distancia do baricentro B
+ periastro        : 1.61 x 10^9 metros de distancia do baricentro B
+ excentricidade   : 0.07
+
+Estrela menos massiva:
+
+     Estrela  ZE 6701-08720 Bb:
+ Classe           : Anã Vermelha
+ Massa            : 3.01 x 10^29 kg
+ Raio             : 1.27 x 10^8 metros
+ Luminosidade     : 1.15 x 10^24 watts
+ Temperatura      : 3160 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 2.09 x 10^9 metros
+ apoastro         : 2.24 x 10^9 metros de distancia do baricentro B
+ periastro        : 1.94 x 10^9 metros de distancia do baricentro B
+ excentricidade   : 0.07
+
+=============================================================================

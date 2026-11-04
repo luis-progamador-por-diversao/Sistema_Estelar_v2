@@ -1,0 +1,109 @@
+=============================================================================
+
+         Sistema multiplo de 4 estrelas: H 735-26
+
+-----------------------------------------------------------------------------
+
+ Seed  : 578234331
+ Idade : Idade estimada: ~0.52 milhões de anos.
+
+=============================================================================
+
+Subsistema ABC:
+Composto por uma estrela e um subsistema:
+
+Periodo orbital dos menbros: aproximadamente 292.06 anos
+
+     Estrela  H 735-26 C:
+ Classe           : Anã Amarelo-Branca
+ Massa            : 2.40 x 10^30 kg
+ Raio             : 8.07 x 10^8 metros
+ Luminosidade     : 8.07 x 10^26 watts
+ Temperatura      : 6462 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 1.91 x 10^13 metros
+ apoastro         : 2.33 x 10^13 metros de distancia do baricentro ABC
+ periastro        : 1.49 x 10^13 metros de distancia do baricentro ABC
+ excentricidade   : 0.22.
+
+Subsistema AB
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 8.63 x 10^11 metros
+ apoastro         : 1.05 x 10^12 metros de distancia do baricentro ABC
+ periastro        : 6.73 x 10^11 metros de distancia do baricentro ABC
+ excentricidade   : 0.22
+
+=============================================================================
+
+Subsistema AB:
+Composto por uma estrela e um subsistema:
+
+Periodo orbital dos menbros: aproximadamente 35.71 anos
+
+     Estrela  H 735-26 A:
+ Classe           : Estrela Azul
+ Massa            : 4.97 x 10^31 kg
+ Raio             : 5.10 x 10^9 metros
+ Luminosidade     : 4.18 x 10^31 watts
+ Temperatura      : 38769 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 3.06 x 10^11 metros
+ apoastro         : 3.64 x 10^11 metros de distancia do baricentro AB
+ periastro        : 2.48 x 10^11 metros de distancia do baricentro AB
+ excentricidade   : 0.19.
+
+Subsistema B
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 4.54 x 10^12 metros
+ apoastro         : 5.40 x 10^12 metros de distancia do baricentro AB
+ periastro        : 3.68 x 10^12 metros de distancia do baricentro AB
+ excentricidade   : 0.19
+
+=============================================================================
+
+Subsistema B:
+Composto por duas estrelas:
+
+Periodo orbital dos menbros: aproximadamente 3.91 anos
+
+Estrela mais massiva:
+
+     Estrela  H 735-26 Ba:
+ Classe           : Anã Amarelo-Branca
+ Massa            : 2.45 x 10^30 kg
+ Raio             : 8.21 x 10^8 metros
+ Luminosidade     : 8.83 x 10^26 watts
+ Temperatura      : 6549 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 1.19 x 10^11 metros
+ apoastro         : 1.83 x 10^11 metros de distancia do baricentro B
+ periastro        : 5.46 x 10^10 metros de distancia do baricentro B
+ excentricidade   : 0.54
+
+Estrela menos massiva:
+
+     Estrela  H 735-26 Bb:
+ Classe           : Anã Laranja
+ Massa            : 9.00 x 10^29 kg
+ Raio             : 3.41 x 10^8 metros
+ Luminosidade     : 1.61 x 10^25 watts
+ Temperatura      : 3736 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 3.23 x 10^11 metros
+ apoastro         : 4.97 x 10^11 metros de distancia do baricentro B
+ periastro        : 1.49 x 10^11 metros de distancia do baricentro B
+ excentricidade   : 0.54
+
+=============================================================================

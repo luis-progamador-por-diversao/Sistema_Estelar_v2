@@ -68,7 +68,7 @@ double Orbita::calcular_periodo_segundos(const Orbita &o1, const Orbita &o2, dou
 
 std::string Orbita::formatar_periodo(double periodo_segundos) {
     if (periodo_segundos <= 0.0) {
-        return "estacionario / indefinido";
+        return "estacionário / indefinido";
     }
 
     const double t_dias = periodo_segundos / Constantes::SEGUNDOS_POR_DIA;
@@ -93,7 +93,7 @@ std::string Orbita::formatar_periodo(double periodo_segundos) {
     }
 
     const double t_milhao = t_anos / 1000000.0;
-    ss << t_milhao << " milhoes de anos";
+    ss << t_milhao << " milhões de anos";
     return ss.str();
 }
 

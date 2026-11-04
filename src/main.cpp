@@ -1,54 +1,48 @@
-#include <iostream>
-#include <random>
-#include <cstdlib>
-#include "nlohmann/json.hpp"
+#include <windows.h>
+#include "menu.hpp"
 #include "gerador_sistema.hpp"
 #include "visualizador_sistema.hpp"
-
-//.\output/Gerador.exe
+//||\n\033[0m?
+//  .\output/Gerador.exe
 
 int main() {
-    int seed = 0;
+    SetConsoleOutputCP(CP_UTF8);
+    Menus::limparTela();
+    bool rodando = true;
 
-    while (true) {
-        char escolha = '\0';
+    while(rodando){
+        char menu_principal = '\0';
 
-        std::cout << "\n\nPrograma para criar sistemas de estrelas:\n\n";
-        std::cout << "\nDigite [1] para escolher uma seed.\nDigite [2] para uma seed aleatoria.\n";
-        std::cin.get(escolha);
-        std::cin.ignore();
+        std::cout << "\nMenu_principal\n";
 
-        if (escolha == '1') {
-            std::cout << "\nDigite a seed: ";
-            if (std::cin >> seed) {
-                break;
-            }
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-        } else if (escolha == '2') {
-            std::random_device rd;
-            seed = static_cast<int>(rd());
-            break;
-        }
+        std::cout << "\n[1] Relatorios .txt.";
+        std::cout << "\n[2] Gerar novo sistema.";
+        std::cout << "\n[3] Fechar programa.";
 
-        std::system("cls");
-        std::cout << "\n\033[31mNumero informado e invalido\033[0m";
-        std::cout << "\nTente outra vez:\n";
+        std::cin >> menu_principal;
+
+        if (menu_principal == '1'){
+
+            Menus::limparTela();
+            std::cout << "\nNao existe nenhum sistema salvo.";
+
+        } else if (menu_principal == '2'){
+            Menus::limparTela();
+            rodando = Menus::geracao_procedural();
+
+        } else if (menu_principal == '3'){
+
+            rodando = false;
+        } 
+         
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        
+        Menus::limparTela();
     }
-
-    std::cout << "\nSeed = " << seed << "\n";
-
-    // Geração procedural completa
-    const SistemaEstelar sistema = GeradorSistema::gerar(seed);
-
-    // Renderização do relatório astronômico no terminal
-    VisualizadorSistema::imprimir_relatorio(
-        std::cout,
-        sistema.nome,
-        sistema.estrelas,
-        sistema.no_raiz.get(),
-        sistema.distancia_binaria);
-
+    
+    Menus::limparTela();
+    
     std::cout << "\n\n\033[32mPrograma finalizado\033[0m\n";
     return 0;
 }

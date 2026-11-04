@@ -47,6 +47,9 @@ struct ApoastrosBaricentro {
 [[nodiscard]] double sortear_excentricidade(std::mt19937 &prng) noexcept;
 
 // Métodos de acoplamento orbital (monta_orbitas)
+// Exclusivo para sistemas binarios.
+void monta_orbitas_binarias(std::mt19937 &prng, Estrela &estrela1, Estrela &estrela2);
+
 // Retornam a separação ou semieixo total em metros
 double monta_orbitas(std::mt19937 &prng, Estrela &estrela1, Estrela &estrela2);
 double monta_orbitas(std::mt19937 &prng, SubsistemaNo *sub, Estrela &estrela);
@@ -61,8 +64,6 @@ inline double monta_orbitas(std::mt19937 &prng, SubsistemaNo &sub1, SubsistemaNo
 }
 
 } // namespace EstabilidadeOrbital
-
-
 
 #endif // ESTABILIDADE_ORBITAL_HPP_INCLUDED
 

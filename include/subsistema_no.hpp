@@ -58,9 +58,5 @@ struct PseudoNo {
     PseudoNo(const std::unique_ptr<SubsistemaNo> &original, double luz) noexcept;
 };
 
-// Aliases para compatibilidade
-using No = SubsistemaNo;
-using Pseudo_no = PseudoNo;
-
 #endif // SUBSISTEMA_NO_HPP_INCLUDED
 

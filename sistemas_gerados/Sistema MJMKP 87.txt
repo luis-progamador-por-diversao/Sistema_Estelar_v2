@@ -1,0 +1,207 @@
+=============================================================================
+
+         Sistema multiplo de 7 estrelas: MJMKP 87
+
+-----------------------------------------------------------------------------
+
+ Seed  : 1847088134
+ Idade : Idade estimada: ~1 bilhão e 252 milhões de anos.
+
+=============================================================================
+
+Subsistema ABCD:
+Composto por uma estrela e um subsistema:
+
+Periodo orbital dos menbros: aproximadamente 1.30 milhoes de anos
+
+     Estrela  MJMKP 87 D:
+ Classe           : Anã Vermelha
+ Massa            : 3.26 x 10^29 kg
+ Raio             : 1.37 x 10^8 metros
+ Luminosidade     : 1.38 x 10^24 watts
+ Temperatura      : 3192 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 3.00 x 10^15 metros
+ apoastro         : 3.21 x 10^15 metros de distancia do baricentro ABCD
+ periastro        : 2.79 x 10^15 metros de distancia do baricentro ABCD
+ excentricidade   : 0.07.
+
+Subsistema ABC
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 9.62 x 10^13 metros
+ apoastro         : 1.03 x 10^14 metros de distancia do baricentro ABCD
+ periastro        : 8.95 x 10^13 metros de distancia do baricentro ABCD
+ excentricidade   : 0.07
+
+=============================================================================
+
+Subsistema ABC:
+Composto por dois subsistemas rivais:
+
+Periodo orbital dos menbros: aproximadamente 140246.91 anos
+
+Subsistema AC
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 2.13 x 10^14 metros
+ apoastro         : 3.38 x 10^14 metros de distancia do baricentro ABC
+ periastro        : 8.71 x 10^13 metros de distancia do baricentro ABC
+ excentricidade   : 0.59
+
+Subsistema B
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 4.83 x 10^14 metros
+ apoastro         : 7.69 x 10^14 metros de distancia do baricentro ABC
+ periastro        : 1.98 x 10^14 metros de distancia do baricentro ABC
+ excentricidade   : 0.59
+
+=============================================================================
+
+Subsistema AC:
+Composto por dois subsistemas rivais:
+
+Periodo orbital dos menbros: aproximadamente 51.36 anos
+
+Subsistema A
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 9.31 x 10^11 metros
+ apoastro         : 1.33 x 10^12 metros de distancia do baricentro AC
+ periastro        : 5.31 x 10^11 metros de distancia do baricentro AC
+ excentricidade   : 0.43
+
+Subsistema C
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 2.22 x 10^12 metros
+ apoastro         : 3.18 x 10^12 metros de distancia do baricentro AC
+ periastro        : 1.27 x 10^12 metros de distancia do baricentro AC
+ excentricidade   : 0.43
+
+=============================================================================
+
+Subsistema A:
+Composto por duas estrelas:
+
+Periodo orbital dos menbros: aproximadamente 8.42 dias
+
+Estrela mais massiva:
+
+     Estrela  MJMKP 87 Aa:
+ Classe           : Estrela Azul-Branca
+ Massa            : 4.33 x 10^30 kg
+ Raio             : 1.27 x 10^9 metros
+ Luminosidade     : 8.18 x 10^27 watts
+ Temperatura      : 9190 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 2.15 x 10^9 metros
+ apoastro         : 3.63 x 10^9 metros de distancia do baricentro A
+ periastro        : 6.66 x 10^8 metros de distancia do baricentro A
+ excentricidade   : 0.69
+
+Estrela menos massiva:
+
+     Estrela  MJMKP 87 Ab:
+ Classe           : Anã Vermelha
+ Massa            : 6.50 x 10^29 kg
+ Raio             : 2.54 x 10^8 metros
+ Luminosidade     : 6.72 x 10^24 watts
+ Temperatura      : 3479 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 1.43 x 10^10 metros
+ apoastro         : 2.42 x 10^10 metros de distancia do baricentro A
+ periastro        : 4.44 x 10^9 metros de distancia do baricentro A
+ excentricidade   : 0.69
+
+=============================================================================
+
+Subsistema C:
+Composto por duas estrelas:
+
+Periodo orbital dos menbros: aproximadamente 1.14 anos
+
+Estrela mais massiva:
+
+     Estrela  MJMKP 87 Ca:
+ Classe           : Anã Amarela
+ Massa            : 1.78 x 10^30 kg
+ Raio             : 6.29 x 10^8 metros
+ Luminosidade     : 2.45 x 10^26 watts
+ Temperatura      : 5435 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 2.42 x 10^10 metros
+ apoastro         : 3.71 x 10^10 metros de distancia do baricentro C
+ periastro        : 1.14 x 10^10 metros de distancia do baricentro C
+ excentricidade   : 0.53
+
+Estrela menos massiva:
+
+     Estrela  MJMKP 87 Cb:
+ Classe           : Anã Vermelha
+ Massa            : 3.06 x 10^29 kg
+ Raio             : 1.29 x 10^8 metros
+ Luminosidade     : 1.19 x 10^24 watts
+ Temperatura      : 3166 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 1.41 x 10^11 metros
+ apoastro         : 2.16 x 10^11 metros de distancia do baricentro C
+ periastro        : 6.63 x 10^10 metros de distancia do baricentro C
+ excentricidade   : 0.53
+
+=============================================================================
+
+Subsistema B:
+Composto por duas estrelas:
+
+Periodo orbital dos menbros: aproximadamente 3.49 dias
+
+Estrela mais massiva:
+
+     Estrela  MJMKP 87 Ba:
+ Classe           : Anã Branca
+ Massa            : 2.83 x 10^30 kg
+ Raio             : 9.22 x 10^8 metros
+ Luminosidade     : 1.57 x 10^27 watts
+ Temperatura      : 7143 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 6.93 x 10^8 metros
+ apoastro         : 9.50 x 10^8 metros de distancia do baricentro B
+ periastro        : 4.37 x 10^8 metros de distancia do baricentro B
+ excentricidade   : 0.37
+
+Estrela menos massiva:
+
+     Estrela  MJMKP 87 Bb:
+ Classe           : Anã Vermelha
+ Massa            : 2.76 x 10^29 kg
+ Raio             : 1.17 x 10^8 metros
+ Luminosidade     : 9.37 x 10^23 watts
+ Temperatura      : 3125 graus celsius
+
+Possui a seguinte orbita:
+
+ semieixo_maior   : 7.12 x 10^9 metros
+ apoastro         : 9.75 x 10^9 metros de distancia do baricentro B
+ periastro        : 4.48 x 10^9 metros de distancia do baricentro B
+ excentricidade   : 0.37
+
+=============================================================================

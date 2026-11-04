@@ -64,7 +64,7 @@ double log_uniforme(std::mt19937 &prng, double min, double max) {
 
 std::vector<Estrela> gerar_lote_estrelas(std::mt19937 &prng,
                                         std::string_view nome_geral,
-                                        unsigned int quanti) {
+                                        unsigned int quanti, double & _idade) {
     if (quanti == 0) {
         return {};
     }
@@ -92,15 +92,18 @@ std::vector<Estrela> gerar_lote_estrelas(std::mt19937 &prng,
     const double t_ref = std::min(t_top, Constantes::IDADE_UNIVERSO_ANOS);
     const double u_max = (t_top > Constantes::IDADE_UNIVERSO_ANOS) ? 1.0 : 1.10;
     const double idade = uniforme(prng, 0.05, u_max) * t_ref;
+    _idade = idade;
 
     for (unsigned int i = 0; i < quanti; ++i) {
         const auto est = FisicaEstelar::definir_estagio_evolutivo(massas[i], idade);
         const auto props = FisicaEstelar::calcular_propriedades_estrela(prng, massas[i], est);
         const std::string tipo = FisicaEstelar::montar_descricao_tipo(classes[i], est, props.temperatura);
+        const char classe_espectral = FisicaEstelar::obter_letra_classe_espectral(static_cast<int>(props.temperatura));
 
-        sistema.emplace_back(std::string(nome_geral), tipo, massas[i], props.raio,
+        sistema.emplace_back(std::string(nome_geral), tipo, 
+                             massas[i], props.raio, 
                              static_cast<int>(props.temperatura), props.luminosidade,
-                             static_cast<int>(i));
+                             classe_espectral);
     }
 
     return sistema;

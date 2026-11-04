@@ -14,7 +14,7 @@ struct SistemaEstelar {
     unsigned int quantidade_estrelas = 0;
     std::vector<Estrela> estrelas;
     std::unique_ptr<SubsistemaNo> no_raiz;
-    double distancia_binaria = 0.0; // Distância característica utilizada quando quanti == 2
+    double idade = 0.0; 
 };
 
 // Classe orquestradora da geração procedural
