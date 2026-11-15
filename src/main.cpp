@@ -24,7 +24,7 @@ int main() {
         if (menu_principal == '1'){
 
             Menus::limparTela();
-            std::cout << "\nNao existe nenhum sistema salvo.";
+            rodando = Menus::relatorios_salvos();
 
         } else if (menu_principal == '2'){
             Menus::limparTela();
@@ -38,10 +38,10 @@ int main() {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         
-        Menus::limparTela();
+        //BMenus::limparTela();
     }
     
-    Menus::limparTela();
+    //Menus::limparTela();
     
     std::cout << "\n\n\033[32mPrograma finalizado\033[0m\n";
     return 0;

@@ -11,7 +11,10 @@ namespace Menus {
     void animacao_gerador();
 
     // Menu da geração procedural
-    [[nodiscard]] bool geracao_procedural() noexcept;
+    [[nodiscard]] bool geracao_procedural();
+
+    // Menu para visualizar os relatorios salvos
+    [[nodiscard]] bool relatorios_salvos();
 
 } // namespace Menus 
 

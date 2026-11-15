@@ -5,8 +5,11 @@
 #include <cstdlib>
 #include <thread>
 #include <chrono>
+#include <filesystem>
+#include <stdexcept>
+#include <system_error>
 
-void Menus::limparTela(){
+void Menus::limparTela() {
 
     #if defined(_WIN32) || defined(_WIN64)
         std::system("cls");
@@ -15,7 +18,7 @@ void Menus::limparTela(){
     #endif
 }
 
-void Menus::animacao_gerador(){
+void Menus::animacao_gerador() {
 
     limparTela();
     std::cout << "\n\033[36m[SISTEMA DE ESTRELAS]\033[0m Inicializando motores de geracao...\n\n";
@@ -46,7 +49,7 @@ void Menus::animacao_gerador(){
     std::this_thread::sleep_for(std::chrono::seconds(1)); 
 }
 
-bool Menus::geracao_procedural() noexcept {
+bool Menus::geracao_procedural() {
 
     animacao_gerador();
 
@@ -55,7 +58,7 @@ bool Menus::geracao_procedural() noexcept {
 
         int seed = 0;
    
-        while(true){ 
+        while(true) { 
             char escolha_seed = '\0';
 
             std::cout << "\n\nGerando Sistema Estelar:\n\n";
@@ -65,7 +68,7 @@ bool Menus::geracao_procedural() noexcept {
             std::cout << "\n[4] Fechar programa.";
             std::cin >> escolha_seed;
 
-            if(escolha_seed == '1'){
+            if (escolha_seed == '1') {
                 std::cout << "\nDigite a seed: ";
                 while (!(std::cin >> seed)) {
                     std::cout << "\n\033[31mSeed invalida! Digite apenas números inteiros:\033[0m ";
@@ -75,7 +78,7 @@ bool Menus::geracao_procedural() noexcept {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 break;
 
-            } else if(escolha_seed == '2'){
+            } else if (escolha_seed == '2'){
                 std::random_device random;
                 seed = random();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -121,13 +124,13 @@ bool Menus::geracao_procedural() noexcept {
         std::cout << "\n[4] Fechar programa.";
         std::cin >> escolha;
 
-        if (escolha == '1'){
+        if (escolha == '1') {
             std::ofstream ofs;
             std::cout << "\nSalvando...\n";
 
             ofs.open("sistemas_gerados/Sistema " + sistema.nome + ".txt");
 
-            if(ofs.is_open()){
+            if (ofs.is_open()) {
 
                 VisualizadorSistema::relatorio(ofs,
                 sistema.seed,
@@ -139,7 +142,7 @@ bool Menus::geracao_procedural() noexcept {
                 std::cout << "\nSistema: " << sistema.nome << " salvo com sucesso.";
                 std::this_thread::sleep_for(std::chrono::seconds(1)); 
 
-            }else{
+            } else {
                 std::cout << "\nOcorreu um erro ao salvar o sistema";
                 std::this_thread::sleep_for(std::chrono::seconds(1)); 
 
@@ -158,7 +161,150 @@ bool Menus::geracao_procedural() noexcept {
 
         escolha = '\0';
     }
+}
 
+[[nodiscard]] std::vector<std::string> extrair_nomes(const std::filesystem::path& pasta = "sistemas_gerados") {
+    std::error_code ec;
+
+    if (!std::filesystem::exists(pasta, ec)) {
+        if (ec) {
+            throw std::runtime_error("Erro ao acessar o sistema de arquivos: " + ec.message());
+        }
+        throw std::runtime_error("A pasta '" + pasta.string() + "' nao foi encontrada.");
+    }
+
+    if (!std::filesystem::is_directory(pasta, ec)) {
+        if (ec) {
+            throw std::runtime_error("Erro ao verificar o diretorio: " + ec.message());
+        }
+        throw std::runtime_error("O caminho '" + pasta.string() + "' nao e um diretorio valido.");
+    }
+
+    std::filesystem::directory_iterator it(pasta, ec);
+    if (ec) {
+        throw std::runtime_error("Nao foi possivel ler o conteudo da pasta '" + pasta.string() + "': " + ec.message());
+    }
+
+    std::vector<std::string> nomes;
+
+    for (const std::filesystem::directory_iterator end; it != end; it.increment(ec)) {
+        if (ec) {
+            throw std::runtime_error("Erro durante a leitura dos arquivos: " + ec.message());
+        }
+
+        const auto& entrada = *it;
+
+        if (entrada.is_regular_file(ec) && !ec && entrada.path().extension() == ".txt") {
+            nomes.emplace_back(entrada.path().filename().string());
+        }
+    }
+
+    return nomes;
+}
+
+void exibir_sistemas(const std::vector<std::string> & sistemas) {
+    std::cout << "=== SISTEMAS ===\n\n";
+
+    std::cout << "=============================================================================\n";
+    for (std::size_t i = 0; i < sistemas.size(); ++i) {
+        std::cout << "[" << (i + 1) << "] " << sistemas[i] << '\n';
+        std::cout << "=============================================================================\n\n";
+    }
+}
+
+bool carregar_sistema(const std::string nome) {
+    std::ifstream ifs;
+
+    ifs.open("sistemas_gerados/" + nome);
+
+    if (!ifs.is_open()) {
+        std::cerr << nome << " não encontrado.\n";
+        return false; 
+    }
+
+    std::string linha;
+    
+    while (std::getline(ifs, linha)) {
+        std::cout << linha << '\n';
+    }
+
+    ifs.close(); 
     return true;
 }
 
+bool Menus::relatorios_salvos() {
+    limparTela();
+    
+    while (true) {
+        std::vector<std::string> arquivos;
+        
+        try {
+            arquivos = extrair_nomes();
+
+            if (arquivos.empty()) {
+                char e = '\0';
+
+                std::cout << "\n[Aviso] Nenhum arquivo de sistema (.txt) encontrado na pasta.";
+                std::cout << "\nDigite qualquer tecla para voltar ao menu princial.";
+                std::cin >> e;
+                std::cin.clear();
+                limparTela();
+                return true;
+            }
+
+            exibir_sistemas(arquivos);
+
+        } catch (const std::exception& e) {
+            std::cerr << "\n[Erro ao listar sistemas]: " << e.what() << '\n';
+            std::cerr << "Verifique se a pasta existe ou se o programa tem permissao de leitura.\n\n";
+            return false;
+        }
+
+        std::size_t escolha = 0ULL;
+
+        std::cout << "Digite o número entre couchetes para carregar um sistema.\n";
+        std::cout << "[0] Para voltar ao menu principal.\n";
+        std::cin >> escolha;
+
+        if (escolha == 0) {
+            return true;
+        } else if (escolha < arquivos.size()) {
+            limparTela();
+
+            bool carregou = carregar_sistema(arquivos[escolha - 1]);
+
+            if (!carregou) {
+                return true;
+            }
+
+            char sub_escolha = '\0';
+
+            std::cout << "\n[1] Excluir sistema.";
+            std::cout << "\n[2] Carregar outro sistema.";
+            std::cout << "\n[3] Voltar ao menu principal.";
+            std::cout << "\n[4] Fechar programa.";std::cin >> sub_escolha;
+
+            if (sub_escolha == '1') {
+                std::filesystem::path pasta = "sistemas_gerados";
+                
+                if (std::filesystem::remove(pasta)) {
+                    std::cout << "Arquivo excluído com sucesso!\n";
+                } else {
+                    std::cout << "O arquivo não foi encontrado.\n";
+                }
+
+            } else if (sub_escolha == '2') {
+                continue;
+            } else if (sub_escolha == '3') {
+                return true;
+            } else if (sub_escolha == '4') {
+                return false;
+            }
+        }
+
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        limparTela();
+    }
+}
