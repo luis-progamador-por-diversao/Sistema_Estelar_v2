@@ -1,4 +1,4 @@
-#include "menu.hpp"
+#include "menus.hpp"
 #include "gerador_sistema.hpp"
 #include "visualizador_sistema.hpp"
 #include <fstream>
@@ -208,7 +208,7 @@ void exibir_sistemas(const std::vector<std::string> & sistemas) {
     std::cout << "=============================================================================\n";
     for (std::size_t i = 0; i < sistemas.size(); ++i) {
         std::cout << "[" << (i + 1) << "] " << sistemas[i] << '\n';
-        std::cout << "=============================================================================\n\n";
+        std::cout << "=============================================================================\n";
     }
 }
 
@@ -260,18 +260,26 @@ bool Menus::relatorios_salvos() {
             return false;
         }
 
-        std::size_t escolha = 0ULL;
+        std::size_t sistema_ID = 0ULL;
 
-        std::cout << "Digite o número entre couchetes para carregar um sistema.\n";
+        std::cout << "\nDigite o número entre cochetes para carregar um sistema.\n";
         std::cout << "[0] Para voltar ao menu principal.\n";
-        std::cin >> escolha;
+         
+        while (!(std::cin >> sistema_ID)) {
+            std::cout << "\n\033[31mEscolha invalida! Digite apenas números inteiros:\033[0m ";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        if (escolha == 0) {
+        if (sistema_ID == 0) {
+            limparTela();
             return true;
-        } else if (escolha < arquivos.size()) {
+
+        } else if (sistema_ID >= 1 && sistema_ID <= arquivos.size()) { 
             limparTela();
 
-            bool carregou = carregar_sistema(arquivos[escolha - 1]);
+            bool carregou = carregar_sistema(arquivos[sistema_ID - 1]);
 
             if (!carregou) {
                 return true;
@@ -282,24 +290,31 @@ bool Menus::relatorios_salvos() {
             std::cout << "\n[1] Excluir sistema.";
             std::cout << "\n[2] Carregar outro sistema.";
             std::cout << "\n[3] Voltar ao menu principal.";
-            std::cout << "\n[4] Fechar programa.";std::cin >> sub_escolha;
+            std::cout << "\n[4] Fechar programa.\nEscolha: ";
+            std::cin >> sub_escolha;
 
             if (sub_escolha == '1') {
-                std::filesystem::path pasta = "sistemas_gerados";
+                std::filesystem::path arquivo_alvo = std::filesystem::path("sistemas_gerados") / arquivos[sistema_ID - 1];
                 
-                if (std::filesystem::remove(pasta)) {
-                    std::cout << "Arquivo excluído com sucesso!\n";
+                if (std::filesystem::remove(arquivo_alvo)) {
+                    std::cout << "\nArquivo excluído com sucesso!\n";
                 } else {
-                    std::cout << "O arquivo não foi encontrado.\n";
+                    std::cout << "\nO arquivo não foi encontrado.\n";
                 }
+                std::this_thread::sleep_for(std::chrono::seconds(1));
 
             } else if (sub_escolha == '2') {
                 continue;
             } else if (sub_escolha == '3') {
+                limparTela();
                 return true;
             } else if (sub_escolha == '4') {
                 return false;
             }
+
+        } else {
+            std::cout << "\n\033[31mOpção fora do intervalo válido!\033[0m\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
         std::cin.clear();

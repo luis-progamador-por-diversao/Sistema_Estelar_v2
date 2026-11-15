@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "menu.hpp"
+#include "menus.hpp"
 #include "gerador_sistema.hpp"
 #include "visualizador_sistema.hpp"
 //||\n\033[0m?
@@ -38,10 +38,10 @@ int main() {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         
-        //BMenus::limparTela();
+        Menus::limparTela();
     }
     
-    //Menus::limparTela();
+    Menus::limparTela();
     
     std::cout << "\n\n\033[32mPrograma finalizado\033[0m\n";
     return 0;
