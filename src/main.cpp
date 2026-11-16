@@ -1,49 +1,41 @@
 #include <windows.h>
+#include <iostream>
 #include "menus.hpp"
-#include "gerador_sistema.hpp"
-#include "visualizador_sistema.hpp"
-//||\n\033[0m?
-//  .\output/Gerador.exe
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     Menus::limparTela();
     bool rodando = true;
 
-    while(rodando){
-        char menu_principal = '\0';
-
-        std::cout << "\nMenu_principal\n";
-
+    while (rodando) {
+        std::cout << "\n=== Menu Principal ===\n";
         std::cout << "\n[1] Relatorios .txt.";
         std::cout << "\n[2] Gerar novo sistema.";
-        std::cout << "\n[3] Fechar programa.";
+        std::cout << "\n[3] Fechar programa.\n";
 
-        std::cin >> menu_principal;
+        char escolha = Menus::lerCharValido("123", "\nEscolha uma opcao: ");
+        auto opcao = static_cast<Menus::OpcaoMenuPrincipal>(escolha);
 
-        if (menu_principal == '1'){
+        switch (opcao) {
+            case Menus::OpcaoMenuPrincipal::Relatorios:
+                Menus::limparTela();
+                rodando = Menus::relatorios_salvos();
+                break;
 
-            Menus::limparTela();
-            rodando = Menus::relatorios_salvos();
+            case Menus::OpcaoMenuPrincipal::GerarSistema:
+                Menus::limparTela();
+                rodando = Menus::geracao_procedural();
+                break;
 
-        } else if (menu_principal == '2'){
-            Menus::limparTela();
-            rodando = Menus::geracao_procedural();
+            case Menus::OpcaoMenuPrincipal::Sair:
+                rodando = false;
+                break;
+        }
 
-        } else if (menu_principal == '3'){
-
-            rodando = false;
-        } 
-         
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        
         Menus::limparTela();
     }
-    
+
     Menus::limparTela();
-    
-    std::cout << "\n\n\033[32mPrograma finalizado\033[0m\n";
+    std::cout << "\n\033[32mPrograma finalizado\033[0m\n";
     return 0;
 }
-

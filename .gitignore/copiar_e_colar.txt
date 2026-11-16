@@ -1,0 +1,5 @@
+
+|| \n \033[0m ? \
+
+ .\output/Gerador.exe
+ 
