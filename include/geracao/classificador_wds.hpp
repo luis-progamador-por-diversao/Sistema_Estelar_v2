@@ -2,8 +2,8 @@
 #define CLASSIFICADOR_WDS_HPP_INCLUDED
 
 #include <vector>
-#include "estrela.hpp"
-#include "subsistema_no.hpp"
+#include "nucleo/estrela.hpp"
+#include "nucleo/subsistema_no.hpp"
 
 namespace ClassificadorWDS {
 

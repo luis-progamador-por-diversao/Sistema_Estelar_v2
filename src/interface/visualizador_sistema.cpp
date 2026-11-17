@@ -1,4 +1,4 @@
-#include "visualizador_sistema.hpp"
+#include "interface/visualizador_sistema.hpp"
 #include <cmath>
 #include <fstream>
 #include <sstream>

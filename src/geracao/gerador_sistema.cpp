@@ -1,9 +1,9 @@
-#include "gerador_sistema.hpp"
+#include "geracao/gerador_sistema.hpp"
 #include <random>
 #include <algorithm>
-#include "gerador_aleatorio.hpp"
-#include "estabilidade_orbital.hpp"
-#include "classificador_wds.hpp"
+#include "geracao/gerador_aleatorio.hpp"
+#include "fisica/estabilidade_orbital.hpp"
+#include "geracao/classificador_wds.hpp"
 
 SistemaEstelar GeradorSistema::gerar(int seed) {
     SistemaEstelar resultado;

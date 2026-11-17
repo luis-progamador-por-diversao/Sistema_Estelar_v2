@@ -4,10 +4,10 @@
 #include <cmath>
 #include <random>
 #include <utility>
-#include "constantes.hpp"
-#include "orbita.hpp"
-#include "estrela.hpp"
-#include "subsistema_no.hpp"
+#include "nucleo/constantes.hpp"
+#include "nucleo/orbita.hpp"
+#include "nucleo/estrela.hpp"
+#include "nucleo/subsistema_no.hpp"
 
 namespace EstabilidadeOrbital {
 

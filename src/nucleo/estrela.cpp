@@ -1,4 +1,4 @@
-#include "estrela.hpp"
+#include "nucleo/estrela.hpp"
 
 Estrela::Estrela(std::string_view nome, std::string_view tipo,
                  double m, double r, int tem, double l,

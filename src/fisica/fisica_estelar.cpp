@@ -1,4 +1,4 @@
-#include "fisica_estelar.hpp"
+#include "fisica/fisica_estelar.hpp"
 #include <cmath>
 #include <algorithm>
 

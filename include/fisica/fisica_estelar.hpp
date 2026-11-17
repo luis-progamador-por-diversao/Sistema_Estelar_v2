@@ -5,7 +5,7 @@
 #include <string>
 #include <string_view>
 #include <random>
-#include "constantes.hpp"
+#include "nucleo/constantes.hpp"
 
 namespace FisicaEstelar {
 

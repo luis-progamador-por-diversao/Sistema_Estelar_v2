@@ -5,9 +5,9 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include "estrela.hpp"
-#include "orbita.hpp"
-#include "subsistema_no.hpp"
+#include "nucleo/estrela.hpp"
+#include "nucleo/orbita.hpp"
+#include "nucleo/subsistema_no.hpp"
 
 namespace VisualizadorSistema {
 

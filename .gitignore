@@ -1,0 +1,10 @@
+# Pastas locais e de configuração
+arquivos_locais/
+.vscode/
+
+# Executáveis e pastas de saída
+output/
+*.exe
+
+# Pasta de sistemas salvos
+sistemas_gerados

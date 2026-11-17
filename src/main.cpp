@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <iostream>
-#include "menus.hpp"
+#include "interface/menus.hpp"
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);

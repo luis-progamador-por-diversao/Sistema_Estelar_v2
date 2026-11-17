@@ -1,6 +1,6 @@
-#include "menus.hpp"
-#include "gerador_sistema.hpp"
-#include "visualizador_sistema.hpp"
+#include "interface/menus.hpp"
+#include "geracao/gerador_sistema.hpp"
+#include "interface/visualizador_sistema.hpp"
 #include <fstream>
 #include <cstdlib>
 #include <thread>

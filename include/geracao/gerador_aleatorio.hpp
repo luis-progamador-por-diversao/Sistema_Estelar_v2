@@ -5,7 +5,7 @@
 #include <string_view>
 #include <vector>
 #include <random>
-#include "estrela.hpp"
+#include "nucleo/estrela.hpp"
 
 namespace GeradorAleatorio {
 

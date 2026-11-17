@@ -1,4 +1,4 @@
-#include "subsistema_no.hpp"
+#include "nucleo/subsistema_no.hpp"
 
 SubsistemaNo::SubsistemaNo(const Estrela &star1, int star1_id,
                            const Estrela &star2, int star2_id,

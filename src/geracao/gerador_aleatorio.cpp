@@ -1,8 +1,8 @@
-#include "gerador_aleatorio.hpp"
+#include "geracao/gerador_aleatorio.hpp"
 #include <cmath>
 #include <algorithm>
-#include "constantes.hpp"
-#include "fisica_estelar.hpp"
+#include "nucleo/constantes.hpp"
+#include "fisica/fisica_estelar.hpp"
 
 namespace GeradorAleatorio {
 

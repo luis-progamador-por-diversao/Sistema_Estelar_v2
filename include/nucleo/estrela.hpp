@@ -5,7 +5,7 @@
 #include <string_view>
 #include "constantes.hpp"
 #include "orbita.hpp"
-#include "fisica_estelar.hpp"
+#include "fisica/fisica_estelar.hpp"
 
 // Representa uma estrela com suas propriedades astrofísicas, orbitais e identificação
 class Estrela {

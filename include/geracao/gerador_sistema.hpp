@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "estrela.hpp"
-#include "subsistema_no.hpp"
+#include "nucleo/estrela.hpp"
+#include "nucleo/subsistema_no.hpp"
 
 // Representa a estrutura de dados completa de um sistema estelar gerado
 struct SistemaEstelar {

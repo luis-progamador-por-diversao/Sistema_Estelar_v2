@@ -1,4 +1,4 @@
-#include "estabilidade_orbital.hpp"
+#include "fisica/estabilidade_orbital.hpp"
 #include <iostream>
 #include <algorithm>
 

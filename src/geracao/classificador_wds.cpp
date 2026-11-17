@@ -1,4 +1,4 @@
-#include "classificador_wds.hpp"
+#include "geracao/classificador_wds.hpp"
 #include <iostream>
 #include <array>
 
