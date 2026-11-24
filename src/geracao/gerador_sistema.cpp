@@ -10,6 +10,8 @@ SistemaEstelar GeradorSistema::gerar(int seed) {
     resultado.seed = seed;
 
     std::mt19937 prng(static_cast<unsigned int>(seed));
+    // Gerador dedicado às inclinações mútuas: preserva a sequência do gerador principal
+    std::mt19937 prng_inc(EstabilidadeOrbital::semente_inclinacoes(seed));
 
     const unsigned int quanti = GeradorAleatorio::sortear_quantidade_estrelas(prng);
     resultado.quantidade_estrelas = quanti;
@@ -35,7 +37,7 @@ SistemaEstelar GeradorSistema::gerar(int seed) {
                 resultado.estrelas[0], 0, resultado.estrelas[1], 1, dist);
 
             dist = EstabilidadeOrbital::monta_orbitas(
-                prng, resultado.no_raiz.get(), resultado.estrelas[2]);
+                prng, prng_inc, resultado.no_raiz.get(), resultado.estrelas[2]);
             resultado.no_raiz = std::make_unique<SubsistemaNo>(
                 std::move(resultado.no_raiz), resultado.estrelas[2], 2, dist);
 
@@ -82,7 +84,7 @@ SistemaEstelar GeradorSistema::gerar(int seed) {
                                  resultado.estrelas[static_cast<std::size_t>(id2)].get_luminosidade()));
 
                     dist = EstabilidadeOrbital::monta_orbitas(
-                        prng, resultado.no_raiz.get(), p.get());
+                        prng, prng_inc, resultado.no_raiz.get(), p.get());
 
                     resultado.no_raiz = std::make_unique<SubsistemaNo>(
                         std::move(resultado.no_raiz), std::move(p), dist);
@@ -98,7 +100,7 @@ SistemaEstelar GeradorSistema::gerar(int seed) {
                 } else {
                     const int id = static_cast<int>(i);
                     dist = EstabilidadeOrbital::monta_orbitas(
-                        prng, resultado.no_raiz.get(), resultado.estrelas[static_cast<std::size_t>(id)]);
+                        prng, prng_inc, resultado.no_raiz.get(), resultado.estrelas[static_cast<std::size_t>(id)]);
 
                     resultado.no_raiz = std::make_unique<SubsistemaNo>(
                         std::move(resultado.no_raiz), resultado.estrelas[static_cast<std::size_t>(id)], id, dist);

@@ -6,5 +6,5 @@ arquivos_locais/
 output/
 *.exe
 
-# Pasta de sistemas salvos
-sistemas_gerados
+# Armazenamento dos sistemas salvos
+sistemas_gerados/

@@ -17,7 +17,13 @@ struct SubsistemaNo {
     std::unique_ptr<SubsistemaNo> sub_menor; // Subsistema filho de menor massa
 
     double massa_sub = 0.0;   // Massa total combinada deste subsistema em kg
-    double membro_dist = 0.0; // Distância orbital característica entre os membros
+    double membro_dist = 0.0; // Semieixo maior relativo da órbita interna entre os membros (a_in), em metros
+
+    // Dados da órbita interna usados na validação de Kozai-Lidov (preenchidos nos construtores,
+    // que exigem que as órbitas dos membros já tenham sido montadas por monta_orbitas)
+    double membro_exc = 0.0; // Excentricidade da órbita interna (e_in)
+    double soma_ext = 0.0;   // Soma das extensões físicas dos dois membros (raio de estrela ou extensão de subsistema), em metros
+    double extensao = 0.0;   // Extensão do subsistema visto de fora: a_in * (1 + e_in) + maior extensão de membro, em metros
 
     // Construtor para par estelar folha (duas estrelas individuais)
     SubsistemaNo(const Estrela &star1, int star1_id,

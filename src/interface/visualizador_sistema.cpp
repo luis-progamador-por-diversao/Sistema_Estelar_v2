@@ -75,6 +75,13 @@ void imprimir_orbita(std::ostream &os, const Orbita &orbit, std::string_view bar
     os << "\n apoastro         : " << formato_cientifico(orbit.apoastro) << " metros de distância do baricentro " << baricentro;
     os << "\n periastro        : " << formato_cientifico(orbit.periastro) << " metros de distância do baricentro " << baricentro;
     os << "\n excentricidade   : " << orbit.excentricidade;
+
+    std::stringstream inc;
+    inc << std::fixed << std::setprecision(2) << orbit.inclinacao << "°"
+        << (orbit.inclinacao > 90.0 ? " (retrógrada)" : " (prógrada)");
+    os << "\n inclinação mútua : " << inc.str();
+    os << "\n anomalia media   : " << orbit.anomalia_media;
+
 }
 
 void imprimir_estrela(std::ostream &os, const Estrela &estrela, std::string_view baricentro) {

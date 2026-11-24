@@ -21,5 +21,5 @@
   - `nucleo/`: Estruturas de dados fundamentais e constantes (`constantes.hpp`, `estrela`, `orbita`, `subsistema_no`).
   - `fisica/`: Cálculos astrofísicos e estabilidade (`fisica_estelar`, `estabilidade_orbital`).
   - `geracao/`: Lógica procedural e classificação (`gerador_aleatorio`, `gerador_sistema`, `classificador_wds`).
-  - `interface/`: Menus e exibição de resultados (`menus`, `visualizador_sistema`).
+  - `interface/`: Menus e exibição de resultados (`menu_gerador`, `menu_saves`, `menus`, `terminal_utils`, `visualizador_sistema`).
 - **Build:** Qualquer nova subpasta criada em `src/` deve ser adicionada manualmente em `.vscode/tasks.json`.
